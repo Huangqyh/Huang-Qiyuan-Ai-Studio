@@ -1,0 +1,263 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Pillar 1: Global Default-Deny Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Reusable Hardened Primitives ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        (
+          request.auth.token.email == 'huangqiyuan.1@gmail.com' &&
+          request.auth.token.email_verified == true
+        ) ||
+        (
+          request.auth.token.email_verified == true &&
+          exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        )
+      );
+    }
+
+    function isValidCategory(cat) {
+      return cat is string && cat in [
+        'NUS Year 3',
+        'NUS Year 2',
+        'NUS Year 1',
+        'Individual BIM',
+        'Professional'
+      ];
+    }
+
+    function isValidProfileMap(p) {
+      return p is map &&
+        p.keys().hasAll([
+          'fullName', 'roleTitle', 'institutionLine', 'location',
+          'availability', 'statement', 'email', 'phone',
+          'linkedinUrl', 'pdfUrl', 'heroPlateUrl', 'heroPlateCaption', 'gpaDisplay'
+        ]) &&
+        p.keys().hasOnly([
+          'fullName', 'roleTitle', 'institutionLine', 'location',
+          'availability', 'statement', 'email', 'phone',
+          'linkedinUrl', 'pdfUrl', 'heroPlateUrl', 'heroPlateCaption', 'gpaDisplay'
+        ]) &&
+        p.fullName is string && p.fullName.size() >= 1 && p.fullName.size() <= 120 &&
+        p.roleTitle is string && p.roleTitle.size() <= 200 &&
+        p.institutionLine is string && p.institutionLine.size() <= 200 &&
+        p.location is string && p.location.size() <= 120 &&
+        p.availability is string && p.availability.size() <= 160 &&
+        p.statement is string && p.statement.size() <= 1200 &&
+        p.email is string && p.email.size() <= 160 &&
+        p.phone is string && p.phone.size() <= 40 &&
+        p.linkedinUrl is string && p.linkedinUrl.size() <= 300 &&
+        p.pdfUrl is string && p.pdfUrl.size() <= 400 &&
+        p.heroPlateUrl is string && p.heroPlateUrl.size() <= 250000 &&
+        p.heroPlateCaption is string && p.heroPlateCaption.size() <= 240 &&
+        p.gpaDisplay is string && p.gpaDisplay.size() <= 40;
+    }
+
+    function isValidPortfolioConfig(data) {
+      return data.keys().hasAll([
+          'schemaVersion', 'isPublished', 'ownerEmail', 'profile',
+          'experiences', 'education', 'skillGroups', 'ventures',
+          'communityService', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'schemaVersion', 'isPublished', 'ownerEmail', 'profile',
+          'experiences', 'education', 'skillGroups', 'ventures',
+          'communityService', 'createdAt', 'updatedAt'
+        ]) &&
+        data.schemaVersion is number && data.schemaVersion >= 1 && data.schemaVersion <= 100 &&
+        data.isPublished is bool &&
+        data.ownerEmail is string && data.ownerEmail.size() >= 3 && data.ownerEmail.size() <= 160 &&
+        isValidProfileMap(data.profile) &&
+        data.experiences is list && data.experiences.size() <= 40 &&
+        (data.experiences.size() == 0 || data.experiences[0] is map) &&
+        data.education is list && data.education.size() <= 20 &&
+        (data.education.size() == 0 || data.education[0] is map) &&
+        data.skillGroups is list && data.skillGroups.size() <= 25 &&
+        (data.skillGroups.size() == 0 || data.skillGroups[0] is map) &&
+        data.ventures is list && data.ventures.size() <= 25 &&
+        (data.ventures.size() == 0 || data.ventures[0] is map) &&
+        data.communityService is list && data.communityService.size() <= 30 &&
+        (data.communityService.size() == 0 || data.communityService[0] is map) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidProject(data, projectId) {
+      return data.keys().hasAll([
+          'id', 'title', 'subtitle', 'category', 'year',
+          'studioOrContext', 'location', 'scale', 'tools',
+          'summary', 'description', 'highlights', 'featured',
+          'plates', 'sortOrder', 'isPublished', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'title', 'subtitle', 'category', 'year',
+          'studioOrContext', 'location', 'scale', 'tools',
+          'summary', 'description', 'highlights', 'featured',
+          'plates', 'sortOrder', 'isPublished', 'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) && data.id == projectId &&
+        data.title is string && data.title.size() >= 1 && data.title.size() <= 200 &&
+        data.subtitle is string && data.subtitle.size() <= 300 &&
+        isValidCategory(data.category) &&
+        data.year is string && data.year.size() >= 1 && data.year.size() <= 32 &&
+        data.studioOrContext is string && data.studioOrContext.size() <= 200 &&
+        data.location is string && data.location.size() <= 160 &&
+        data.scale is string && data.scale.size() <= 100 &&
+        data.tools is list && data.tools.size() >= 1 && data.tools.size() <= 20 &&
+        data.tools[0] is string && data.tools[0].size() <= 80 &&
+        data.summary is string && data.summary.size() >= 1 && data.summary.size() <= 1000 &&
+        data.description is string && data.description.size() <= 5000 &&
+        data.highlights is list && data.highlights.size() >= 1 && data.highlights.size() <= 20 &&
+        data.highlights[0] is string && data.highlights[0].size() <= 600 &&
+        data.featured is bool &&
+        data.plates is list && data.plates.size() >= 1 && data.plates.size() <= 30 &&
+        data.plates[0] is map &&
+        data.sortOrder is number && data.sortOrder >= 0 && data.sortOrder <= 10000 &&
+        data.isPublished is bool &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidSketch(data, sketchId) {
+      return data.keys().hasAll([
+          'id', 'title', 'subject', 'medium', 'year',
+          'imageUrl', 'plateNumber', 'sortOrder', 'isPublished',
+          'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'id', 'title', 'subject', 'medium', 'year',
+          'imageUrl', 'plateNumber', 'sortOrder', 'isPublished',
+          'createdAt', 'updatedAt'
+        ]) &&
+        isValidId(data.id) && data.id == sketchId &&
+        data.title is string && data.title.size() >= 1 && data.title.size() <= 200 &&
+        data.subject is string && data.subject.size() <= 200 &&
+        data.medium is string && data.medium.size() >= 1 && data.medium.size() <= 160 &&
+        data.year is string && data.year.size() >= 1 && data.year.size() <= 32 &&
+        data.imageUrl is string && data.imageUrl.size() >= 1 && data.imageUrl.size() <= 450000 &&
+        data.plateNumber is string && data.plateNumber.size() >= 1 && data.plateNumber.size() <= 32 &&
+        data.sortOrder is number && data.sortOrder >= 0 && data.sortOrder <= 10000 &&
+        data.isPublished is bool &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    // --- Collection: /site_config/{configId} ---
+    match /site_config/{configId} {
+      allow get: if isValidId(configId) && (
+        (configId == 'portfolio' && (resource == null || resource.data.isPublished == true)) ||
+        isAdmin()
+      );
+      allow list: if isAdmin();
+
+      allow create: if isSignedIn() &&
+        configId == 'portfolio' &&
+        isValidPortfolioConfig(incoming()) &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        isAdmin();
+
+      allow update: if isValidPortfolioConfig(incoming()) &&
+        isSignedIn() &&
+        configId == 'portfolio' &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'schemaVersion', 'isPublished', 'ownerEmail', 'profile',
+          'experiences', 'education', 'skillGroups', 'ventures',
+          'communityService', 'updatedAt'
+        ]) &&
+        isAdmin();
+
+      allow delete: if isAdmin() && configId == 'portfolio';
+    }
+
+    // --- Collection: /projects/{projectId} ---
+    match /projects/{projectId} {
+      allow get: if isValidId(projectId) && (
+        resource == null || resource.data.isPublished == true || isAdmin()
+      );
+      allow list: if resource.data.isPublished == true || isAdmin();
+
+      allow create: if isSignedIn() &&
+        isValidId(projectId) &&
+        isValidProject(incoming(), projectId) &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        isAdmin();
+
+      allow update: if isValidProject(incoming(), projectId) &&
+        isSignedIn() &&
+        isValidId(projectId) &&
+        incoming().id == existing().id &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'title', 'subtitle', 'category', 'year', 'studioOrContext',
+          'location', 'scale', 'tools', 'summary', 'description',
+          'highlights', 'featured', 'plates', 'sortOrder', 'isPublished',
+          'updatedAt'
+        ]) &&
+        isAdmin();
+
+      allow delete: if isAdmin() && isValidId(projectId);
+    }
+
+    // --- Collection: /sketches/{sketchId} ---
+    match /sketches/{sketchId} {
+      allow get: if isValidId(sketchId) && (
+        resource == null || resource.data.isPublished == true || isAdmin()
+      );
+      allow list: if resource.data.isPublished == true || isAdmin();
+
+      allow create: if isSignedIn() &&
+        isValidId(sketchId) &&
+        isValidSketch(incoming(), sketchId) &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        isAdmin();
+
+      allow update: if isValidSketch(incoming(), sketchId) &&
+        isSignedIn() &&
+        isValidId(sketchId) &&
+        incoming().id == existing().id &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'title', 'subject', 'medium', 'year', 'imageUrl',
+          'plateNumber', 'sortOrder', 'isPublished', 'updatedAt'
+        ]) &&
+        isAdmin();
+
+      allow delete: if isAdmin() && isValidId(sketchId);
+    }
+
+    // --- Collection: /admins/{adminUid} ---
+    match /admins/{adminUid} {
+      allow get: if isValidId(adminUid) && isAdmin();
+      allow list: if isAdmin();
+      allow create, update, delete: if false;
+    }
+  }
+}

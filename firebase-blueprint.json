@@ -1,0 +1,322 @@
+{
+  "entities": {
+    "PortfolioConfig": {
+      "title": "PortfolioConfig",
+      "description": "Public portfolio header profile and CV collections (experience, education, skills, ventures, community service) managed exclusively by the verified portfolio owner.",
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "description": "Schema version integer for forward-compatible portfolio metadata."
+        },
+        "isPublished": {
+          "type": "boolean",
+          "description": "Whether the portfolio configuration is publicly visible to visitors."
+        },
+        "ownerEmail": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 160,
+          "description": "Verified owner email address associated with the portfolio."
+        },
+        "profile": {
+          "type": "object",
+          "description": "Public architect monograph header, statement, contact links, and cover plate."
+        },
+        "experiences": {
+          "type": "array",
+          "description": "Chronological architectural internships and studio experience entries (max 40)."
+        },
+        "education": {
+          "type": "array",
+          "description": "Academic credentials and coursework list (max 20)."
+        },
+        "skillGroups": {
+          "type": "array",
+          "description": "Categorized software and fabrication skill groups (max 25)."
+        },
+        "ventures": {
+          "type": "array",
+          "description": "Design-build fabrication and property advisory highlights (max 25)."
+        },
+        "communityService": {
+          "type": "array",
+          "description": "Volunteer leadership and community service records (max 30)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Immutable server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of the latest owner update."
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "isPublished",
+        "ownerEmail",
+        "profile",
+        "experiences",
+        "education",
+        "skillGroups",
+        "ventures",
+        "communityService",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "PortfolioProject": {
+      "title": "PortfolioProject",
+      "description": "Individual architectural studio, climatic, BIM, or professional project with drawing plates.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Unique slug identifier matching the Firestore document ID."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "Project title."
+        },
+        "subtitle": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Concise architectural focus subtitle."
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "NUS Year 3",
+            "NUS Year 2",
+            "NUS Year 1",
+            "Individual BIM",
+            "Professional"
+          ],
+          "description": "Academic year or practice discipline filter category."
+        },
+        "year": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "description": "Completion year."
+        },
+        "studioOrContext": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Studio unit or practice context."
+        },
+        "location": {
+          "type": "string",
+          "maxLength": 160,
+          "description": "Project site or studio location."
+        },
+        "scale": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Primary drawing scale or deliverable label."
+        },
+        "tools": {
+          "type": "array",
+          "description": "Software and fabrication methods used (1 to 20 entries)."
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "description": "One-sentence card overview."
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 5000,
+          "description": "Full architectural thesis narrative."
+        },
+        "highlights": {
+          "type": "array",
+          "description": "Key project deliverables and achievements (1 to 20 entries)."
+        },
+        "featured": {
+          "type": "boolean",
+          "description": "Whether the project is highlighted as featured."
+        },
+        "plates": {
+          "type": "array",
+          "description": "Ordered drawing plates with imageUrl, caption, plateNumber, and optional scale (1 to 30 entries)."
+        },
+        "sortOrder": {
+          "type": "number",
+          "description": "Explicit display ordering index (0 to 10000)."
+        },
+        "isPublished": {
+          "type": "boolean",
+          "description": "Visibility gate for public visitor queries."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Immutable server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of the latest update."
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "subtitle",
+        "category",
+        "year",
+        "studioOrContext",
+        "location",
+        "scale",
+        "tools",
+        "summary",
+        "description",
+        "highlights",
+        "featured",
+        "plates",
+        "sortOrder",
+        "isPublished",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "SketchItem": {
+      "title": "SketchItem",
+      "description": "Hand-drawn observational sketch entry in the architectural sketch gallery.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Unique sketch identifier matching the Firestore document ID."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "Sketch title."
+        },
+        "subject": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Architectural subject or typology."
+        },
+        "medium": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "description": "Drawing medium."
+        },
+        "year": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "description": "Year created."
+        },
+        "imageUrl": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 450000,
+          "description": "Static asset path or compressed data URL for the sketch image."
+        },
+        "plateNumber": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "description": "Plate index label (e.g. SK. 01)."
+        },
+        "sortOrder": {
+          "type": "number",
+          "description": "Explicit display ordering index (0 to 10000)."
+        },
+        "isPublished": {
+          "type": "boolean",
+          "description": "Visibility gate for public visitor queries."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Immutable server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of the latest update."
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "subject",
+        "medium",
+        "year",
+        "imageUrl",
+        "plateNumber",
+        "sortOrder",
+        "isPublished",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AdminRecord": {
+      "title": "AdminRecord",
+      "description": "Trusted allowlist record for additional admin UIDs (read-only from client).",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 160,
+          "description": "Admin email address."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp."
+        }
+      },
+      "required": [
+        "email",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/site_config/{configId}": {
+      "schema": {
+        "$ref": "#/entities/PortfolioConfig"
+      },
+      "description": "Stores the singleton public portfolio document at /site_config/portfolio containing profile, CV experience, education, skills, ventures, and community service."
+    },
+    "/projects/{projectId}": {
+      "schema": {
+        "$ref": "#/entities/PortfolioProject"
+      },
+      "description": "Stores individual portfolio project documents with plates and ordering metadata."
+    },
+    "/sketches/{sketchId}": {
+      "schema": {
+        "$ref": "#/entities/SketchItem"
+      },
+      "description": "Stores individual hand-drawn sketch gallery documents."
+    },
+    "/admins/{adminUid}": {
+      "schema": {
+        "$ref": "#/entities/AdminRecord"
+      },
+      "description": "Read-only admin membership registry used alongside the bootstrapped verified owner email."
+    }
+  }
+}

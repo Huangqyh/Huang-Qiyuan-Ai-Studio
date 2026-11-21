@@ -1,0 +1,36 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /portfolio/models/{allPaths=**} {
+      allow read: if true;
+      allow create, update: if request.auth != null &&
+        request.auth.token.email == 'huangqiyuan.1@gmail.com' &&
+        request.auth.token.email_verified == true &&
+        request.resource.size < 30 * 1024 * 1024 &&
+        (
+          request.resource.contentType.matches('image/.*|model/.*|application/octet-stream|text/plain') ||
+          request.resource.name.matches('.*\\.(glb|obj|GLB|OBJ)$')
+        );
+      allow delete: if request.auth != null &&
+        request.auth.token.email == 'huangqiyuan.1@gmail.com' &&
+        request.auth.token.email_verified == true;
+    }
+
+    match /portfolio/{allPaths=**} {
+      allow read: if true;
+      allow create, update: if request.auth != null &&
+        request.auth.token.email == 'huangqiyuan.1@gmail.com' &&
+        request.auth.token.email_verified == true &&
+        request.resource.size < 10 * 1024 * 1024 &&
+        request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null &&
+        request.auth.token.email == 'huangqiyuan.1@gmail.com' &&
+        request.auth.token.email_verified == true;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

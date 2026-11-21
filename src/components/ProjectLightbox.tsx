@@ -1,0 +1,256 @@
+import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { PortfolioProject } from '../types/portfolio';
+import { ArchitecturalImage } from './ArchitecturalImage';
+
+interface ProjectLightboxProps {
+  project: PortfolioProject | null;
+  onClose: () => void;
+}
+
+export function ProjectLightbox({ project, onClose }: ProjectLightboxProps) {
+  const [plateIndex, setPlateIndex] = useState(0);
+  const [zoom, setZoom] = useState<1 | 1.5 | 2>(1);
+
+  useEffect(() => {
+    setPlateIndex(0);
+    setZoom(1);
+  }, [project?.id]);
+
+  useEffect(() => {
+    if (!project) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      } else if (e.key === 'ArrowRight' && project.plates.length > 1) {
+        setPlateIndex((prev) => (prev + 1) % project.plates.length);
+        setZoom(1);
+      } else if (e.key === 'ArrowLeft' && project.plates.length > 1) {
+        setPlateIndex((prev) => (prev - 1 + project.plates.length) % project.plates.length);
+        setZoom(1);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [project, onClose]);
+
+  if (!project) return null;
+
+  const activePlate = project.plates[plateIndex];
+
+  const cycleZoom = () => {
+    setZoom((prev) => (prev === 1 ? 1.5 : prev === 1.5 ? 2 : 1));
+  };
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${project.title} architectural plates`}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#141413]/85 backdrop-blur-xs p-3 sm:p-6 no-print"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="relative w-full max-w-[1320px] max-h-[92vh] bg-[#FAFAF8] border border-[#E5E5E0] rounded-2xl overflow-hidden flex flex-col lg:flex-row shadow-2xl">
+        {/* Left/Main High-Res Drawing Plate Viewport */}
+        <div className="lg:flex-1 min-w-0 flex flex-col bg-[#F1F0EB] min-h-[320px] lg:min-h-[680px] max-h-[55vh] lg:max-h-[92vh]">
+          {/* Plate Toolbar */}
+          <div className="flex items-center justify-between gap-4 px-5 py-3 bg-white border-b border-[#E5E5E0]">
+            <div className="flex items-center gap-2 text-xs text-[#575652] min-w-0">
+              <span className="font-mono-tabular font-medium text-[#141413] shrink-0">
+                {activePlate ? activePlate.plateNumber : 'NO PLATE'}
+              </span>
+              {activePlate && (
+                <>
+                  <span aria-hidden="true">/</span>
+                  <span className="truncate">{activePlate.caption}</span>
+                </>
+              )}
+            </div>
+
+            <div className="flex items-center gap-1.5 shrink-0">
+              {activePlate && (
+                <button
+                  type="button"
+                  onClick={cycleZoom}
+                  aria-label={zoom === 2 ? 'Reset plate zoom' : 'Zoom in drawing plate'}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-[#141413] bg-[#F3F2EE] hover:bg-[#E7E5DE] rounded-md transition-colors whitespace-nowrap"
+                >
+                  {zoom > 1 ? (
+                    <ZoomOut className="w-3.5 h-3.5" aria-hidden="true" />
+                  ) : (
+                    <ZoomIn className="w-3.5 h-3.5" aria-hidden="true" />
+                  )}
+                  <span className="font-mono-tabular">{Math.round(zoom * 100)}%</span>
+                </button>
+              )}
+
+              {project.plates.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPlateIndex(
+                        (prev) => (prev - 1 + project.plates.length) % project.plates.length
+                      );
+                      setZoom(1);
+                    }}
+                    aria-label="Previous drawing plate"
+                    className="inline-flex items-center justify-center w-8 h-8 rounded-md text-[#141413] hover:bg-[#EFECE6] transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPlateIndex((prev) => (prev + 1) % project.plates.length);
+                      setZoom(1);
+                    }}
+                    aria-label="Next drawing plate"
+                    className="inline-flex items-center justify-center w-8 h-8 rounded-md text-[#141413] hover:bg-[#EFECE6] transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Scrollable Zoomable Drawing Canvas */}
+          <div className="flex-1 overflow-auto p-4 sm:p-5 flex">
+            <div
+              className="m-auto transition-all duration-200"
+              style={{
+                width: zoom === 1 ? '100%' : `${zoom * 100}%`,
+                maxWidth: zoom === 1 ? '860px' : 'none',
+              }}
+            >
+              <ArchitecturalImage
+                src={activePlate?.imageUrl}
+                alt={activePlate ? `${project.title} — ${activePlate.caption}` : project.title}
+                title={project.title}
+                plateNumber={activePlate?.plateNumber}
+                fit="contain"
+                className={`w-full bg-white border border-[#E5E5E0] rounded-lg p-2.5 ${
+                  zoom === 1 ? 'h-[42vh] lg:h-[66vh]' : 'min-h-[68vh]'
+                }`}
+              />
+            </div>
+          </div>
+
+          {/* Multi-Plate Thumbnail Switcher */}
+          {project.plates.length > 1 && (
+            <div className="px-5 py-3 bg-white border-t border-[#E5E5E0] flex items-center gap-2.5 overflow-x-auto">
+              {project.plates.map((plate, idx) => {
+                const isSelected = idx === plateIndex;
+                return (
+                  <button
+                    key={plate.id}
+                    type="button"
+                    onClick={() => {
+                      setPlateIndex(idx);
+                      setZoom(1);
+                    }}
+                    aria-label={`View ${plate.plateNumber}: ${plate.caption}`}
+                    aria-current={isSelected ? 'true' : undefined}
+                    className={`relative shrink-0 w-16 h-12 rounded-md overflow-hidden border transition-all ${
+                      isSelected
+                        ? 'border-[#1D4ED8] ring-2 ring-[#1D4ED8]/25'
+                        : 'border-[#E5E5E0] opacity-70 hover:opacity-100'
+                    }`}
+                  >
+                    <ArchitecturalImage
+                      src={plate.imageUrl}
+                      alt={plate.caption}
+                      fit="cover"
+                      variant="thumbnail"
+                      className="w-full h-full"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Right Architectural Case Study Specifications Sidebar */}
+        <aside className="lg:w-[390px] xl:w-[420px] shrink-0 bg-[#FAFAF8] border-t lg:border-t-0 lg:border-l border-[#E5E5E0] flex flex-col max-h-[40vh] lg:max-h-[92vh]">
+          <div className="flex-1 overflow-y-auto p-6 sm:p-7">
+            <div className="flex items-start justify-between gap-4 mb-5">
+              <div>
+                <p className="font-mono-tabular text-xs text-[#6B6A65] mb-1">
+                  {project.studioOrContext} · {project.year}
+                </p>
+                <h3 className="font-editorial text-3xl font-semibold text-[#141413] leading-tight">
+                  {project.title}
+                </h3>
+              </div>
+
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close project viewer"
+                className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#575652] hover:text-[#141413] hover:bg-[#EFECE6] transition-colors shrink-0"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-sm font-medium text-[#2C2C2A] mb-4">{project.subtitle}</p>
+
+            {/* Technical Metadata Grid */}
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-3 py-4 border-y border-[#E5E5E0] text-xs mb-5">
+              <div>
+                <dt className="text-[#6B6A65] mb-0.5">Category</dt>
+                <dd className="font-medium text-[#141413]">{project.category}</dd>
+              </div>
+              <div>
+                <dt className="text-[#6B6A65] mb-0.5">Scale / Deliverable</dt>
+                <dd className="font-mono-tabular font-medium text-[#141413]">{project.scale}</dd>
+              </div>
+              <div>
+                <dt className="text-[#6B6A65] mb-0.5">Location</dt>
+                <dd className="font-medium text-[#141413]">{project.location}</dd>
+              </div>
+              <div>
+                <dt className="text-[#6B6A65] mb-0.5">Software &amp; Methods</dt>
+                <dd className="font-medium text-[#141413]">{project.tools.join(', ')}</dd>
+              </div>
+            </dl>
+
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-xs font-semibold text-[#141413] mb-1.5">Design Thesis</h4>
+                <p className="text-sm text-[#575652] leading-relaxed">{project.description}</p>
+              </div>
+
+              {project.highlights.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-semibold text-[#141413] mb-2">Key Deliverables</h4>
+                  <ul className="space-y-2 text-sm text-[#575652]">
+                    {project.highlights.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2.5">
+                        <span className="font-mono-tabular text-xs text-[#8A8882] mt-0.5">
+                          0{idx + 1}
+                        </span>
+                        <span className="leading-relaxed">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="px-6 py-3.5 bg-white border-t border-[#E5E5E0] flex items-center justify-between text-xs text-[#6B6A65] shrink-0">
+            <span>Use ← / → keys to browse plates</span>
+            <span className="font-mono-tabular">
+              {project.plates.length > 0 ? `${plateIndex + 1} / ${project.plates.length}` : '0 / 0'}
+            </span>
+          </div>
+        </aside>
+      </div>
+    </div>
+  );
+}
