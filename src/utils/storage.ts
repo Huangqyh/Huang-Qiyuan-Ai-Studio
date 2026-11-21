@@ -2,7 +2,7 @@ import { Model3DItem } from '../types/portfolio';
 import { CanvasSurface, parseCanvasSurface } from './portfolioLogic';
 
 const SURFACE_KEY = 'hqy_arch_surface_v1';
-const MODELS_KEY = 'hqy_arch_models_v1';
+const MODELS_KEY = 'hqy_arch_models_v2';
 const QUALITY_STEPS = [0.84, 0.72, 0.6, 0.48, 0.36];
 const MAX_DIMENSION_ATTEMPTS = 8;
 

@@ -803,6 +803,47 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
   ],
   models: [
     {
+      id: 'y3s2-permeable-sports-corridor',
+      title: 'Permeable Sports Corridor — Active "Growing" Community Center',
+      subtitle: 'Modular Tubular Rib Spine, Hinged Arches & Adaptive Civic Sports Infrastructure',
+      year: '2026',
+      studioOrContext: 'NUS Year 3 · Semester 2 (Studio CLR)',
+      scale: '1:200 Physical & Digital Model',
+      software: ['Rhino', '3D Print & Laser Cut', 'WebGL / glTF'],
+      description:
+        'Curved modular tubular sports corridor weaving between an outdoor running track and an indoor stadium. Fluted white structural shells, interlocking metallic rib arches, and timber deck inserts choreograph a spatial gradient from open porous threshold to sheltered civic arena.',
+      modelUrl: '/assets/models/y3s2-permeable-sports-corridor.glb',
+      format: 'glb',
+      photos: [
+        {
+          id: 'y3s2-ph-01',
+          imageUrl: '/assets/models/y3s2-photos/01-hero-physical-model.jpg',
+          caption: 'Hero 3/4 Model — White Fluted Shells, Metallic Arch Ribs & Contoured Site',
+        },
+        {
+          id: 'y3s2-ph-02',
+          imageUrl: '/assets/models/y3s2-photos/02-exhibition-boards-model.jpg',
+          caption: 'Exhibition Display — Physical Model & Active "Growing" Community Center Boards',
+        },
+        {
+          id: 'y3s2-ph-03',
+          imageUrl: '/assets/models/y3s2-photos/03-portal-arch-perspective.jpg',
+          caption: 'Eye-Level Portal — Ribbed Metallic Arches, Timber Hoops & Running Track',
+        },
+        {
+          id: 'y3s2-ph-04',
+          imageUrl: '/assets/models/y3s2-photos/04-top-down-interlocking-ribs.jpg',
+          caption: 'Top-Down Detail — Interlocking Metallic Arch Ribs & Fluted Tubular Shells',
+        },
+        {
+          id: 'y3s2-ph-05',
+          imageUrl: '/assets/models/y3s2-photos/05-section-interior-decks.jpg',
+          caption: 'Sectional Perspective — Timber Arch Frame, Interior Decks & Fluted Shell',
+        },
+      ],
+      isPublished: true,
+    },
+    {
       id: 'y3s1-model',
       title: "3R's V.2 — Heritage Rethought",
       subtitle: 'Adaptive Kit-of-Parts Conservation Framework for Singapore Shophouses',
