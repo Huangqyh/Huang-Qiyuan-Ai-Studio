@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { INITIAL_PORTFOLIO_DATA } from '../data/initialPortfolio';
+import { localizePortfolioData, UI_TEXT } from '../i18n/translations';
 import {
   addExperienceToPortfolio,
   addModelToPortfolio,
@@ -234,4 +235,25 @@ test('validates and manages 3D models and companion photos immutably', () => {
 
   const withoutModel = deleteModelFromPortfolio(withoutPhoto, newModelId);
   assert.equal(withoutModel.models.length, INITIAL_PORTFOLIO_DATA.models.length);
+});
+
+test('localizes portfolio data to Simplified Chinese while preserving canonical filters', () => {
+  const enData = localizePortfolioData(INITIAL_PORTFOLIO_DATA, 'en');
+  assert.equal(enData.profile.fullName, 'Huang Qiyuan');
+
+  const zhData = localizePortfolioData(INITIAL_PORTFOLIO_DATA, 'zh');
+  assert.equal(zhData.profile.fullName, '黄启元');
+  assert.equal(zhData.projects.length, INITIAL_PORTFOLIO_DATA.projects.length);
+  assert.equal(zhData.experiences.length, INITIAL_PORTFOLIO_DATA.experiences.length);
+  assert.equal(zhData.sketches.length, INITIAL_PORTFOLIO_DATA.sketches.length);
+  assert.equal(zhData.models.length, INITIAL_PORTFOLIO_DATA.models.length);
+
+  assert.equal(zhData.projects[0].title, '渗透式运动走廊');
+  assert.equal(zhData.projects[0].category, 'NUS Year 3');
+  assert.ok(filterProjects(zhData.projects, 'NUS Year 3', '').length === 2);
+  assert.equal(zhData.models[0].title, '渗透式运动走廊 — 生长型社区中心');
+  assert.equal(zhData.models[3].variants?.length, 6);
+  assert.equal(zhData.models[3].variants?.[0].label, 'RC 终版空间框架');
+  assert.equal(UI_TEXT.en.switchToLanguageLabel, '中文');
+  assert.equal(UI_TEXT.zh.switchToLanguageLabel, 'EN');
 });

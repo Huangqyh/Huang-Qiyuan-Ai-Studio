@@ -14,6 +14,14 @@
     color: #141413;
   }
 
+  html[lang="zh-CN"] {
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", var(--font-sans);
+  }
+
+  html[lang="zh-CN"] .font-editorial {
+    font-family: "Noto Serif SC", "Songti SC", "STSong", "SimSun", var(--font-serif);
+  }
+
   h1, h2 {
     text-wrap: balance;
   }

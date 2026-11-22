@@ -1,5 +1,6 @@
-import { ChevronDown, ChevronUp, FileDown, Printer, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Printer, X } from 'lucide-react';
 import { useState } from 'react';
+import { Locale, UI_TEXT } from '../i18n/translations';
 import {
   AdditionalVenture,
   CommunityServiceItem,
@@ -16,7 +17,7 @@ interface CurriculumVitaeSectionProps {
   skillGroups: SkillGroup[];
   ventures: AdditionalVenture[];
   communityService: CommunityServiceItem[];
-  pdfUrl: string;
+  locale: Locale;
   activeSkill: string | null;
   onToggleSkill: (skill: string) => void;
   onClearSkill: () => void;
@@ -28,11 +29,12 @@ export function CurriculumVitaeSection({
   skillGroups,
   ventures,
   communityService,
-  pdfUrl,
+  locale,
   activeSkill,
   onToggleSkill,
   onClearSkill,
 }: CurriculumVitaeSectionProps) {
+  const t = UI_TEXT[locale].cv;
   const [collapsedExpIds, setCollapsedExpIds] = useState<Record<string, boolean>>({});
   const matchedExpIds = getMatchingExperienceIds(experiences, activeSkill);
 
@@ -49,11 +51,9 @@ export function CurriculumVitaeSection({
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
           <div>
-            <p className="font-mono-tabular text-xs text-[#6B6A65] mb-2">
-              02. Curriculum Vitae
-            </p>
+            <p className="font-mono-tabular text-xs text-[#6B6A65] mb-2">{t.eyebrow}</p>
             <h2 className="font-editorial text-3xl sm:text-4xl font-semibold tracking-tight text-[#141413]">
-              Practice, Education &amp; Technical Proficiencies
+              {t.heading}
             </h2>
             <InkUnderline />
           </div>
@@ -65,17 +65,8 @@ export function CurriculumVitaeSection({
               className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#141413] bg-white border border-[#DFDED8] hover:border-[#141413] rounded-md transition-colors whitespace-nowrap shrink-0"
             >
               <Printer className="w-3.5 h-3.5" aria-hidden="true" />
-              Print CV
+              {t.printCv}
             </button>
-
-            <a
-              href={pdfUrl}
-              download="Huang_Qiyuan_CV_and_Portfolio.pdf"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#141413] bg-white border border-[#DFDED8] hover:border-[#141413] rounded-md transition-colors whitespace-nowrap shrink-0"
-            >
-              <FileDown className="w-3.5 h-3.5" aria-hidden="true" />
-              Full Portfolio PDF
-            </a>
           </div>
         </div>
 
@@ -87,17 +78,17 @@ export function CurriculumVitaeSection({
             <div>
               <div className="flex items-center justify-between gap-4 pb-3 mb-6 border-b border-[#DFDED8]">
                 <h3 className="text-sm font-semibold text-[#141413]">
-                  Architectural Experience
+                  {t.experienceHeading}
                 </h3>
                 {activeSkill && (
                   <div className="flex items-center gap-2 text-xs text-[#1D4ED8]">
                     <span>
-                      Highlighting roles using <strong>{activeSkill}</strong>
+                      {t.highlightingRoles} <strong>{activeSkill}</strong>
                     </span>
                     <button
                       type="button"
                       onClick={onClearSkill}
-                      aria-label={`Clear ${activeSkill} skill filter`}
+                      aria-label={t.clearSkillAria(activeSkill)}
                       className="p-0.5 rounded hover:bg-[#E0EAFF]"
                     >
                       <X className="w-3.5 h-3.5" />
@@ -143,8 +134,8 @@ export function CurriculumVitaeSection({
                               aria-expanded={!isCollapsed}
                               aria-label={
                                 isCollapsed
-                                  ? `Expand details for ${exp.company}`
-                                  : `Collapse details for ${exp.company}`
+                                  ? t.expandAria(exp.company)
+                                  : t.collapseAria(exp.company)
                               }
                               className="no-print inline-flex items-center justify-center w-8 h-8 rounded-md text-[#6B6A65] hover:text-[#141413] hover:bg-[#F3F2EE] transition-colors"
                             >
@@ -175,7 +166,7 @@ export function CurriculumVitaeSection({
 
                             {exp.tools.length > 0 && (
                               <p className="mt-4 pt-3 border-t border-[#F0EFEA] text-xs text-[#6B6A65]">
-                                Tools used: {exp.tools.join(' · ')}
+                                {t.toolsUsed} {exp.tools.join(' · ')}
                               </p>
                             )}
                           </>
@@ -191,7 +182,7 @@ export function CurriculumVitaeSection({
             {/* Education */}
             <div>
               <div className="pb-3 mb-6 border-b border-[#DFDED8]">
-                <h3 className="text-sm font-semibold text-[#141413]">Education</h3>
+                <h3 className="text-sm font-semibold text-[#141413]">{t.educationHeading}</h3>
               </div>
 
               <div className="space-y-5">
@@ -213,14 +204,14 @@ export function CurriculumVitaeSection({
 
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#575652] mb-4">
                       <span className="font-mono-tabular font-medium text-[#141413]">
-                        GPA {edu.gpa}
+                        {t.gpaPrefix} {edu.gpa}
                       </span>
                       <span aria-hidden="true">·</span>
                       <span>{edu.honours}</span>
                     </div>
 
                     <p className="text-xs text-[#575652] leading-relaxed">
-                      <span className="font-semibold text-[#141413]">Relevant Coursework: </span>
+                      <span className="font-semibold text-[#141413]">{t.courseworkLabel} </span>
                       {edu.coursework.join(' · ')}
                     </p>
                   </article>
@@ -231,9 +222,7 @@ export function CurriculumVitaeSection({
             {/* Independent Fabrication & Real Estate Services */}
             <div>
               <div className="pb-3 mb-6 border-b border-[#DFDED8]">
-                <h3 className="text-sm font-semibold text-[#141413]">
-                  Design-Build Fabrication &amp; Property Advisory
-                </h3>
+                <h3 className="text-sm font-semibold text-[#141413]">{t.venturesHeading}</h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -261,22 +250,18 @@ export function CurriculumVitaeSection({
             {/* Interactive Software & Technical Skills Matrix */}
             <div className="bg-white border border-[#E5E5E0] rounded-xl p-6 print-break-avoid">
               <div className="flex items-start justify-between gap-2 mb-2">
-                <h3 className="text-sm font-semibold text-[#141413]">
-                  Software &amp; Technical Skills
-                </h3>
+                <h3 className="text-sm font-semibold text-[#141413]">{t.skillsHeading}</h3>
                 {activeSkill && (
                   <button
                     type="button"
                     onClick={onClearSkill}
                     className="no-print text-xs font-medium text-[#1D4ED8] hover:underline"
                   >
-                    Reset
+                    {t.resetSkill}
                   </button>
                 )}
               </div>
-              <p className="text-xs text-[#6B6A65] mb-6 no-print">
-                Select any tool to highlight matching firms and filter portfolio projects.
-              </p>
+              <p className="text-xs text-[#6B6A65] mb-6 no-print">{t.skillsHint}</p>
 
               <div className="space-y-5">
                 {skillGroups.map((group) => (
@@ -312,7 +297,7 @@ export function CurriculumVitaeSection({
             {/* Community Service */}
             <div className="bg-white border border-[#E5E5E0] rounded-xl p-6 print-break-avoid">
               <h3 className="text-sm font-semibold text-[#141413] pb-3 mb-5 border-b border-[#F0EFEA]">
-                Community Service &amp; Leadership
+                {t.communityHeading}
               </h3>
 
               <div className="space-y-6">

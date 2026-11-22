@@ -1,5 +1,6 @@
 import { Box, Camera, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { Locale, UI_TEXT } from '../i18n/translations';
 import { Model3DItem } from '../types/portfolio';
 import { ArchitecturalImage } from './ArchitecturalImage';
 import { InkDivider, InkUnderline } from './SketchMotion';
@@ -10,9 +11,11 @@ const ModelViewer3D = lazy(() =>
 
 interface ModelsShowcaseSectionProps {
   models: Model3DItem[];
+  locale: Locale;
 }
 
-export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
+export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionProps) {
+  const t = UI_TEXT[locale].models;
   const sectionRef = useRef<HTMLElement>(null);
   const [hasEnteredProximity, setHasEnteredProximity] = useState(false);
   const [isViewportVisible, setIsViewportVisible] = useState(false);
@@ -116,21 +119,17 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
         {/* Section Heading */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
           <div>
-            <p className="font-mono-tabular text-xs text-[#6B6A65] mb-2">
-              04. Spatial Archive
-            </p>
+            <p className="font-mono-tabular text-xs text-[#6B6A65] mb-2">{t.eyebrow}</p>
             <h2 className="font-editorial text-3xl sm:text-4xl font-semibold tracking-tight text-[#141413]">
-              3D Models &amp; Physical Studies
+              {t.heading}
             </h2>
             <InkUnderline />
-            <p className="mt-3 text-sm text-[#575652] max-w-2xl">
-              Interactive spatial models exported from architectural studio workflows alongside
-              companion physical model and site photographs.
-            </p>
+            <p className="mt-3 text-sm text-[#575652] max-w-2xl">{t.subtitle}</p>
           </div>
 
           <span className="font-mono-tabular text-xs text-[#6B6A65] shrink-0">
-            {String(models.length).padStart(2, '0')} {models.length === 1 ? 'Model' : 'Models'}
+            {String(models.length).padStart(2, '0')}{' '}
+            {models.length === 1 ? t.modelSingular : t.modelPlural}
           </span>
         </div>
 
@@ -138,7 +137,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
         {models.length > 0 && (
           <div
             role="tablist"
-            aria-label="Select 3D architectural model"
+            aria-label={t.selectorAria}
             className="flex flex-wrap items-center gap-2 mb-6 no-print"
           >
             {models.map((model, idx) => {
@@ -181,12 +180,8 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
         {!activeModel ? (
           <div className="py-16 px-6 text-center bg-white border border-[#E5E5E0] rounded-xl">
             <Box className="w-8 h-8 text-[#8A8882] mx-auto mb-3" aria-hidden="true" />
-            <p className="font-editorial text-2xl text-[#141413] mb-1">
-              No 3D Models Published Yet
-            </p>
-            <p className="text-sm text-[#575652]">
-              Add your first .glb or .obj architectural model inside Owner Studio → 3D Models.
-            </p>
+            <p className="font-editorial text-2xl text-[#141413] mb-1">{t.emptyTitle}</p>
+            <p className="text-sm text-[#575652]">{t.emptyHint}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
@@ -195,7 +190,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
               <div className="flex flex-wrap items-center justify-between gap-2 no-print">
                 <div
                   role="tablist"
-                  aria-label="Model showcase view mode"
+                  aria-label={t.viewModeAria}
                   className="inline-flex items-center gap-1 p-1 bg-[#EFECE6] border border-[#E2E0D8] rounded-lg"
                 >
                   <button
@@ -210,7 +205,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                     }`}
                   >
                     <Box className="w-3.5 h-3.5" aria-hidden="true" />
-                    3D Model
+                    {t.tab3d}
                   </button>
                   <button
                     role="tab"
@@ -224,7 +219,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                     }`}
                   >
                     <Camera className="w-3.5 h-3.5" aria-hidden="true" />
-                    Model Photos ({activeModel.photos.length})
+                    {t.tabPhotos(activeModel.photos.length)}
                   </button>
                 </div>
 
@@ -235,7 +230,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#141413] bg-white border border-[#DFDED8] hover:border-[#1D4ED8] rounded-md transition-colors"
                   >
                     <ZoomIn className="w-3.5 h-3.5" aria-hidden="true" />
-                    Expand Photo
+                    {t.expandPhoto}
                   </button>
                 )}
               </div>
@@ -244,7 +239,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                 <div className="bg-white border border-[#E5E5E0] rounded-lg px-3 py-2.5 space-y-2 no-print">
                   <div className="flex items-center justify-between gap-2 text-[11px]">
                     <span className="font-mono-tabular uppercase tracking-wider text-[#6B6A65]">
-                      Structural Models ({variants.length})
+                      {t.structuralHeading(variants.length)}
                     </span>
                     {activeVariant && (
                       <span className="font-mono-tabular text-[#1D4ED8] truncate">
@@ -254,7 +249,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                   </div>
                   <div
                     role="tablist"
-                    aria-label="Select structural study model"
+                    aria-label={t.selectVariantAria}
                     className="flex flex-wrap gap-1.5"
                   >
                     {variants.map((variant, vIdx) => {
@@ -291,7 +286,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                         <div className="flex flex-col items-center justify-center w-full min-h-[440px] sm:min-h-[520px] bg-[#F5F4EF] border border-[#E5E5E0] rounded-xl px-6 text-center">
                           <Box className="w-7 h-7 text-[#8A8882] mb-2.5" aria-hidden="true" />
                           <p className="font-mono-tabular text-xs text-[#6B6A65]">
-                            Initializing 3D Viewport...
+                            {t.initializing3d}
                           </p>
                         </div>
                       }
@@ -304,28 +299,22 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                             ? `${activeModel.title} — ${activeVariant.label}`
                             : activeModel.title
                         }
+                        locale={locale}
                         isVisible={isViewportVisible}
                       />
                     </Suspense>
                   ) : (
                     <div className="flex flex-col items-center justify-center w-full min-h-[440px] sm:min-h-[520px] bg-[#F5F4EF] border border-[#E5E5E0] rounded-xl px-6 text-center">
                       <Box className="w-7 h-7 text-[#8A8882] mb-2.5" aria-hidden="true" />
-                      <p className="font-mono-tabular text-xs text-[#6B6A65]">
-                        Interactive 3D model loads automatically when in view
-                      </p>
+                      <p className="font-mono-tabular text-xs text-[#6B6A65]">{t.scrollToLoad}</p>
                     </div>
                   )}
                 </div>
               ) : !currentStagePhoto ? (
                 <div className="flex-1 min-h-[440px] sm:min-h-[520px] flex flex-col items-center justify-center text-center bg-white border border-[#E5E5E0] rounded-xl p-8">
                   <Camera className="w-8 h-8 text-[#9C9A92] mb-2" aria-hidden="true" />
-                  <p className="font-editorial text-xl text-[#141413] mb-1">
-                    No Physical Model Photos Yet
-                  </p>
-                  <p className="text-xs text-[#6B6A65] max-w-sm">
-                    Upload physical model photographs in Owner Studio → 3D Models to showcase them
-                    here alongside the 3D viewer.
-                  </p>
+                  <p className="font-editorial text-xl text-[#141413] mb-1">{t.noPhotosTitle}</p>
+                  <p className="text-xs text-[#6B6A65] max-w-sm">{t.noPhotosHint}</p>
                 </div>
               ) : (
                 <div className="flex-1 flex flex-col bg-white border border-[#E5E5E0] rounded-xl overflow-hidden">
@@ -333,7 +322,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                     <button
                       type="button"
                       onClick={() => setPhotoLightboxIndex(safeStagePhotoIndex)}
-                      aria-label={`Expand ${currentStagePhoto.caption}`}
+                      aria-label={currentStagePhoto.caption}
                       className="w-full h-full cursor-zoom-in focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D4ED8]"
                     >
                       <ArchitecturalImage
@@ -355,7 +344,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                                 activeModel.photos.length
                             )
                           }
-                          aria-label="Previous physical model photo"
+                          aria-label={t.prevPhotoAria}
                           className="absolute left-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/90 hover:bg-white text-[#141413] border border-[#E5E5E0] shadow-xs transition-colors"
                         >
                           <ChevronLeft className="w-4 h-4" />
@@ -367,7 +356,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                               (safeStagePhotoIndex + 1) % activeModel.photos.length
                             )
                           }
-                          aria-label="Next physical model photo"
+                          aria-label={t.nextPhotoAria}
                           className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/90 hover:bg-white text-[#141413] border border-[#E5E5E0] shadow-xs transition-colors"
                         >
                           <ChevronRight className="w-4 h-4" />
@@ -438,7 +427,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                 <dl className="grid grid-cols-3 gap-3 py-3 border-y border-[#F0EFEA] text-xs">
                   <div className="col-span-2 min-w-0">
                     <dt className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#8A8882] mb-0.5">
-                      Year of Study
+                      {t.yearOfStudyLabel}
                     </dt>
                     <dd className="font-medium text-[#141413] truncate">
                       {activeModel.studioOrContext}
@@ -446,7 +435,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                   </div>
                   <div>
                     <dt className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#8A8882] mb-0.5">
-                      Year
+                      {t.yearLabel}
                     </dt>
                     <dd className="font-mono-tabular font-medium text-[#141413]">
                       {activeModel.year}
@@ -454,7 +443,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                   </div>
                   <div className="col-span-3">
                     <dt className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#8A8882] mb-0.5">
-                      Model Scale
+                      {t.scaleLabel}
                     </dt>
                     <dd className="font-mono-tabular text-[#575652]">{activeModel.scale}</dd>
                   </div>
@@ -465,7 +454,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                 {activeVariant && (
                   <div className="p-3.5 bg-[#F7F6F2] border border-[#E5E4DC] rounded-lg space-y-1">
                     <p className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#1D4ED8]">
-                      Active Study Model · {activeVariant.systemType}
+                      {t.activeVariantPrefix} · {activeVariant.systemType}
                     </p>
                     <p className="text-sm font-semibold text-[#141413]">{activeVariant.label}</p>
                     <p className="text-xs text-[#575652] leading-relaxed">
@@ -491,22 +480,20 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <h4 className="text-xs font-semibold uppercase tracking-wider text-[#141413] flex items-center gap-1.5">
                     <Camera className="w-3.5 h-3.5 text-[#1D4ED8]" aria-hidden="true" />
-                    Companion Photographs
+                    {t.companionHeading}
                   </h4>
                   <span className="font-mono-tabular text-xs text-[#6B6A65]">
                     {activeModel.photos.length}{' '}
-                    {activeModel.photos.length === 1 ? 'Photo' : 'Photos'}
+                    {activeModel.photos.length === 1 ? t.photoSingular : t.photoPlural}
                   </span>
                 </div>
 
                 {activeModel.photos.length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-center border border-dashed border-[#D6D4CC] bg-[#FAF9F6] rounded-lg p-6 min-h-[180px]">
                     <Camera className="w-6 h-6 text-[#9C9A92] mb-2" aria-hidden="true" />
-                    <p className="text-xs font-medium text-[#2C2C2A] mb-1">
-                      No companion photos uploaded yet
-                    </p>
+                    <p className="text-xs font-medium text-[#2C2C2A] mb-1">{t.noCompanionTitle}</p>
                     <p className="text-xs text-[#6B6A65] max-w-xs leading-relaxed">
-                      Add physical model or studio photos anytime in Owner Studio → 3D Models.
+                      {t.noCompanionHint}
                     </p>
                   </div>
                 ) : (
@@ -581,7 +568,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                             activeModel.photos.length
                         )
                       }
-                      aria-label="Previous photo"
+                      aria-label={t.prevPhotoAria}
                       className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#141413] hover:bg-[#F3F2EE]"
                     >
                       <ChevronLeft className="w-4 h-4" />
@@ -591,7 +578,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                       onClick={() =>
                         setPhotoLightboxIndex((photoLightboxIndex + 1) % activeModel.photos.length)
                       }
-                      aria-label="Next photo"
+                      aria-label={t.nextPhotoAria}
                       className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#141413] hover:bg-[#F3F2EE]"
                     >
                       <ChevronRight className="w-4 h-4" />
@@ -601,7 +588,7 @@ export function ModelsShowcaseSection({ models }: ModelsShowcaseSectionProps) {
                 <button
                   type="button"
                   onClick={() => setPhotoLightboxIndex(null)}
-                  aria-label="Close photo viewer"
+                  aria-label={t.closePhotoViewerAria}
                   className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#575652] hover:text-[#141413] hover:bg-[#F3F2EE]"
                 >
                   <X className="w-5 h-5" />

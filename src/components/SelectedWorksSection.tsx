@@ -1,4 +1,5 @@
 import { ArrowUpRight, Layers, Search, X } from 'lucide-react';
+import { Locale, UI_TEXT } from '../i18n/translations';
 import { PortfolioProject, ProjectCategory } from '../types/portfolio';
 import { CategoryFilter } from '../utils/portfolioLogic';
 import { ArchitecturalImage } from './ArchitecturalImage';
@@ -12,6 +13,7 @@ import {
 interface SelectedWorksSectionProps {
   projects: PortfolioProject[];
   totalCount: number;
+  locale: Locale;
   categoryFilter: CategoryFilter;
   searchQuery: string;
   activeSkill: string | null;
@@ -33,6 +35,7 @@ const CATEGORIES: CategoryFilter[] = [
 export function SelectedWorksSection({
   projects,
   totalCount,
+  locale,
   categoryFilter,
   searchQuery,
   activeSkill,
@@ -41,17 +44,17 @@ export function SelectedWorksSection({
   onClearSkillFilter,
   onSelectProject,
 }: SelectedWorksSectionProps) {
+  const t = UI_TEXT[locale].works;
+
   return (
     <section id="works" className="pt-14 pb-16 lg:pt-16 lg:pb-20 bg-transparent">
       <div className="max-w-[1240px] mx-auto px-5 sm:px-8">
         {/* Section Heading & Controls */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
           <div>
-            <p className="font-mono-tabular text-xs text-[#6B6A65] mb-2">
-              01. Architectural Portfolio
-            </p>
+            <p className="font-mono-tabular text-xs text-[#6B6A65] mb-2">{t.eyebrow}</p>
             <h2 className="font-editorial text-3xl sm:text-4xl font-semibold tracking-tight text-[#141413]">
-              Selected Works
+              {t.heading}
             </h2>
             <InkUnderline />
           </div>
@@ -64,14 +67,14 @@ export function SelectedWorksSection({
                 aria-hidden="true"
               />
               <label htmlFor="works-search" className="sr-only">
-                Search projects by title, software, or topic
+                {t.searchAria}
               </label>
               <input
                 id="works-search"
                 type="search"
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="Search projects or tools..."
+                placeholder={t.searchPlaceholder}
                 className="w-full sm:w-64 pl-9 pr-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md text-[#141413] placeholder:text-[#8A8882] focus:outline-none focus:border-[#1D4ED8] focus:ring-2 focus:ring-[#1D4ED8]/15"
               />
             </div>
@@ -82,7 +85,7 @@ export function SelectedWorksSection({
         <div className="flex flex-wrap items-center justify-between gap-4 mb-8 no-print">
           <div
             role="tablist"
-            aria-label="Filter projects by discipline"
+            aria-label={t.categoryTabAria}
             className="inline-flex flex-wrap items-center gap-1 p-1 bg-[#F1F0EB]/95 border border-[#E5E4DC] rounded-lg"
           >
             {CATEGORIES.map((category) => {
@@ -100,7 +103,7 @@ export function SelectedWorksSection({
                       : 'text-[#575652] hover:text-[#141413]'
                   }`}
                 >
-                  {category}
+                  {t.categories[category]}
                 </button>
               );
             })}
@@ -113,25 +116,19 @@ export function SelectedWorksSection({
                 onClick={onClearSkillFilter}
                 className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-[#1D4ED8] bg-[#EFF4FF] hover:bg-[#E0EAFF] rounded-md transition-colors"
               >
-                Skill filter: {activeSkill}
+                {t.skillFilterPrefix} {activeSkill}
                 <X className="w-3.5 h-3.5" aria-hidden="true" />
               </button>
             )}
-            <span className="font-mono-tabular">
-              Showing {projects.length} of {totalCount}
-            </span>
+            <span className="font-mono-tabular">{t.showingCount(projects.length, totalCount)}</span>
           </div>
         </div>
 
         {/* Empty State */}
         {projects.length === 0 ? (
           <div className="py-16 px-6 text-center bg-white border border-[#E5E5E0] rounded-xl">
-            <p className="font-editorial text-2xl text-[#141413] mb-2">
-              No matching architectural works
-            </p>
-            <p className="text-sm text-[#575652] mb-5">
-              Adjust your discipline tab, clear the skill filter, or try a different search keyword.
-            </p>
+            <p className="font-editorial text-2xl text-[#141413] mb-2">{t.emptyTitle}</p>
+            <p className="text-sm text-[#575652] mb-5">{t.emptyHint}</p>
             <button
               type="button"
               onClick={() => {
@@ -141,7 +138,7 @@ export function SelectedWorksSection({
               }}
               className="px-4 py-2 text-xs font-semibold text-white bg-[#141413] hover:bg-[#1D4ED8] rounded-md transition-colors"
             >
-              Reset All Filters
+              {t.resetFilters}
             </button>
           </div>
         ) : (
@@ -155,7 +152,7 @@ export function SelectedWorksSection({
                 index < 2;
               const coverPlate = project.plates[0];
               const plateLabel = `${project.plates.length} ${
-                project.plates.length === 1 ? 'Plate' : 'Plates'
+                project.plates.length === 1 ? t.plateSingular : t.platePlural
               }`;
 
               return (
@@ -168,7 +165,7 @@ export function SelectedWorksSection({
                     <button
                       type="button"
                       onClick={() => onSelectProject(project)}
-                      aria-label={`Open ${project.title} case study and drawing plates`}
+                      aria-label={t.openAria(project.title)}
                       className="flex flex-col flex-1 text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#1D4ED8]"
                     >
                       {/* Drawing Plate Container with Tactile Zoom & Soft Ink-Wash Reveal Overlay */}
@@ -221,7 +218,7 @@ export function SelectedWorksSection({
                             </span>
                           </div>
                           <span className="inline-flex items-center gap-1 text-xs font-semibold tracking-wide text-white whitespace-nowrap shrink-0">
-                            View Plates
+                            {t.viewPlates}
                             <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                           </span>
                         </div>
@@ -231,7 +228,7 @@ export function SelectedWorksSection({
                       <div className="p-5 sm:p-6 flex flex-col flex-1 justify-between gap-4">
                         <div>
                           <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-[#6B6A65] mb-2">
-                            <span>{project.category}</span>
+                            <span>{t.categories[project.category] ?? project.category}</span>
                             <span aria-hidden="true">·</span>
                             <span className="font-mono-tabular">{project.year}</span>
                             <span aria-hidden="true">·</span>

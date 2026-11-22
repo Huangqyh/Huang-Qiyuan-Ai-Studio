@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { Locale, UI_TEXT } from '../i18n/translations';
 
 export type RenderMode = 'clay' | 'materials' | 'wireframe';
 
@@ -11,6 +12,7 @@ interface ModelViewer3DProps {
   modelUrl: string;
   format: 'glb' | 'obj';
   title: string;
+  locale: Locale;
   /** Live viewport visibility from IntersectionObserver; pauses rendering when scrolled away. */
   isVisible?: boolean;
 }
@@ -122,8 +124,10 @@ export function ModelViewer3D({
   modelUrl,
   format,
   title,
+  locale,
   isVisible = true,
 }: ModelViewer3DProps) {
+  const t = UI_TEXT[locale].viewer3d;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const canvasHostRef = useRef<HTMLDivElement>(null);
 
@@ -509,7 +513,7 @@ export function ModelViewer3D({
     const onError = () => {
       if (cancelled) return;
       setIsLoading(false);
-      setLoadError('Could not load 3D model file. Check that the asset path is accessible.');
+      setLoadError('LOAD_ERROR');
     };
 
     if (format === 'obj') {
@@ -604,20 +608,20 @@ export function ModelViewer3D({
     <div
       ref={wrapperRef}
       className="relative flex flex-col w-full h-full min-h-[440px] sm:min-h-[520px] bg-[#F5F4EF] border border-[#E5E5E0] rounded-xl overflow-hidden select-none"
-      aria-label={`Interactive 3D viewport for ${title}`}
+      aria-label={t.viewportAria(title)}
     >
       {/* Top Toolbar (solid drafting surface, zero backdrop-blur over WebGL) */}
       <div className="z-10 px-3.5 py-2.5 bg-[#FAFAF8] border-b border-[#E5E5E0] flex flex-wrap items-center justify-between gap-2">
         <div
           role="group"
-          aria-label="3D render mode"
+          aria-label={t.renderModeAria}
           className="inline-flex items-center gap-1 p-0.5 bg-[#EFECE6] border border-[#E2E0D8] rounded-md"
         >
           {(
             [
-              { id: 'materials', label: 'Materials' },
-              { id: 'clay', label: 'Clay' },
-              { id: 'wireframe', label: 'Wireframe' },
+              { id: 'materials', label: t.materials },
+              { id: 'clay', label: t.clay },
+              { id: 'wireframe', label: t.wireframe },
             ] as const
           ).map((mode) => {
             const active = renderMode === mode.id;
@@ -650,23 +654,23 @@ export function ModelViewer3D({
             }`}
           >
             <RefreshCw className={`w-3 h-3 ${autoRotate ? 'animate-spin' : ''}`} aria-hidden="true" />
-            Orbit
+            {t.orbit}
           </button>
 
           <button
             type="button"
             onClick={handleResetView}
-            title="Reset camera view"
+            title={t.resetTitle}
             className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white text-[#2C2C2A] border border-[#DFDED8] hover:border-[#141413] rounded transition-colors"
           >
             <RotateCcw className="w-3 h-3" aria-hidden="true" />
-            Reset
+            {t.reset}
           </button>
 
           <button
             type="button"
             onClick={handleToggleFullscreen}
-            aria-label={isFullscreen ? 'Exit fullscreen 3D viewer' : 'Enter fullscreen 3D viewer'}
+            aria-label={isFullscreen ? t.exitFullscreen : t.enterFullscreen}
             className="inline-flex items-center justify-center w-7 h-7 bg-white text-[#2C2C2A] border border-[#DFDED8] hover:border-[#141413] rounded transition-colors"
           >
             {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
@@ -681,7 +685,7 @@ export function ModelViewer3D({
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#F5F4EF]/95 px-6 text-center">
             <p className="font-mono-tabular text-xs text-[#6B6A65] mb-2">
-              Loading 3D Geometry... {loadProgress > 0 ? `${loadProgress}%` : ''}
+              {t.loading} {loadProgress > 0 ? `${loadProgress}%` : ''}
             </p>
             <div className="w-52 h-1.5 bg-[#E5E4DC] rounded-full overflow-hidden">
               <div
@@ -695,15 +699,15 @@ export function ModelViewer3D({
         {loadError && !isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#F5F4EF] px-6 text-center">
             <p className="font-editorial text-lg font-semibold text-[#141413] mb-1">
-              3D Preview Unavailable
+              {t.unavailable}
             </p>
-            <p className="text-xs text-[#6B6A65] max-w-sm">{loadError}</p>
+            <p className="text-xs text-[#6B6A65] max-w-sm">{t.loadError}</p>
           </div>
         )}
 
         {!isLoading && !loadError && (
           <div className="pointer-events-none absolute left-3.5 bottom-3 px-2.5 py-1 bg-white/95 border border-[#E5E5E0] rounded text-[11px] font-mono-tabular text-[#575652]">
-            Drag to orbit · Scroll to zoom · Right-drag to pan
+            {t.controlsHint}
           </div>
         )}
       </div>

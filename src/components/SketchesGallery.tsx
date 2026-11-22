@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Locale, UI_TEXT } from '../i18n/translations';
 import { SketchItem } from '../types/portfolio';
 import { ArchitecturalImage } from './ArchitecturalImage';
 import {
@@ -11,11 +12,13 @@ import {
 
 interface SketchesGalleryProps {
   sketches: SketchItem[];
+  locale: Locale;
 }
 
-export function SketchesGallery({ sketches }: SketchesGalleryProps) {
+export function SketchesGallery({ sketches, locale }: SketchesGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [zoomed, setZoomed] = useState(false);
+  const t = UI_TEXT[locale].sketches;
 
   const selectedSketch = selectedIndex !== null ? sketches[selectedIndex] : null;
 
@@ -44,17 +47,12 @@ export function SketchesGallery({ sketches }: SketchesGalleryProps) {
       <div className="max-w-[1240px] mx-auto px-5 sm:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
           <div>
-            <p className="font-mono-tabular text-xs text-[#6B6A65] mb-2">
-              03. Observational Studies
-            </p>
+            <p className="font-mono-tabular text-xs text-[#6B6A65] mb-2">{t.eyebrow}</p>
             <h2 className="font-editorial text-3xl sm:text-4xl font-semibold tracking-tight text-[#141413]">
-              Hand-Drawn Sketches &amp; Ink Studies
+              {t.heading}
             </h2>
             <InkUnderline />
-            <p className="mt-3 text-sm text-[#575652] max-w-xl">
-              Freehand pen and graphite architectural observations spanning vernacular thresholds,
-              classical vaults, European silhouettes, and Singapore waterfront landmarks.
-            </p>
+            <p className="mt-3 text-sm text-[#575652] max-w-xl">{t.subtitle}</p>
           </div>
         </div>
 
@@ -69,7 +67,7 @@ export function SketchesGallery({ sketches }: SketchesGalleryProps) {
                     setSelectedIndex(index);
                     setZoomed(false);
                   }}
-                  aria-label={`Inspect sketch: ${sketch.title}`}
+                  aria-label={t.inspectAria(sketch.title)}
                   className="flex flex-col flex-1 text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#1D4ED8]"
                 >
                   <div className="relative aspect-[3/4] w-full overflow-hidden bg-white border-b border-[#F0EFEA] p-3">
@@ -111,7 +109,7 @@ export function SketchesGallery({ sketches }: SketchesGalleryProps) {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={`Sketch study: ${selectedSketch.title}`}
+          aria-label={t.dialogAria(selectedSketch.title)}
           className="fixed inset-0 z-50 flex items-center justify-center bg-[#141413]/85 backdrop-blur-xs p-4 sm:p-8 no-print"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
@@ -135,7 +133,7 @@ export function SketchesGallery({ sketches }: SketchesGalleryProps) {
                 <button
                   type="button"
                   onClick={() => setZoomed((prev) => !prev)}
-                  aria-label={zoomed ? 'Zoom out sketch' : 'Zoom in sketch'}
+                  aria-label={zoomed ? t.zoomOutAria : t.zoomInAria}
                   className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#141413] hover:bg-[#F3F2EE] transition-colors"
                 >
                   {zoomed ? <ZoomOut className="w-4 h-4" /> : <ZoomIn className="w-4 h-4" />}
@@ -146,7 +144,7 @@ export function SketchesGallery({ sketches }: SketchesGalleryProps) {
                     setSelectedIndex((selectedIndex - 1 + sketches.length) % sketches.length);
                     setZoomed(false);
                   }}
-                  aria-label="Previous sketch"
+                  aria-label={t.prevAria}
                   className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#141413] hover:bg-[#F3F2EE] transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -157,7 +155,7 @@ export function SketchesGallery({ sketches }: SketchesGalleryProps) {
                     setSelectedIndex((selectedIndex + 1) % sketches.length);
                     setZoomed(false);
                   }}
-                  aria-label="Next sketch"
+                  aria-label={t.nextAria}
                   className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#141413] hover:bg-[#F3F2EE] transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -168,7 +166,7 @@ export function SketchesGallery({ sketches }: SketchesGalleryProps) {
                     setSelectedIndex(null);
                     setZoomed(false);
                   }}
-                  aria-label="Close sketch viewer"
+                  aria-label={t.closeAria}
                   className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#575652] hover:text-[#141413] hover:bg-[#F3F2EE] transition-colors"
                 >
                   <X className="w-5 h-5" />

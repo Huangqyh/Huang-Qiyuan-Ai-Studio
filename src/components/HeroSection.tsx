@@ -3,11 +3,11 @@ import {
   Check,
   Copy,
   ExternalLink,
-  FileDown,
   FileText,
   Grid2x2,
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { Locale, UI_TEXT } from '../i18n/translations';
 import { ProfileInfo } from '../types/portfolio';
 import { CanvasSurface } from '../utils/portfolioLogic';
 import { ArchitecturalImage } from './ArchitecturalImage';
@@ -15,6 +15,7 @@ import { DraftingCornerMarks, InkDivider, InkUnderline } from './SketchMotion';
 
 interface HeroSectionProps {
   profile: ProfileInfo;
+  locale: Locale;
   projectCount: number;
   experienceCount: number;
   sketchCount: number;
@@ -27,6 +28,7 @@ interface HeroSectionProps {
 
 export function HeroSection({
   profile,
+  locale,
   projectCount,
   experienceCount,
   sketchCount,
@@ -36,6 +38,8 @@ export function HeroSection({
   onCopyShowcaseLink,
   onOpenHeroPlate,
 }: HeroSectionProps) {
+  const t = UI_TEXT[locale].hero;
+
   return (
     <section id="top" className="relative bg-transparent">
       <div className="max-w-[1240px] mx-auto px-5 sm:px-8 pt-8 pb-10 lg:pt-10 lg:pb-12">
@@ -104,7 +108,7 @@ export function HeroSection({
                   href="#works"
                   className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-[#1D4ED8] hover:bg-[#1E40AF] rounded-md transition-colors duration-150 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D4ED8]"
                 >
-                  Explore Selected Works
+                  {t.exploreWorks}
                   <ArrowDownRight className="w-4 h-4" aria-hidden="true" />
                 </a>
 
@@ -116,31 +120,22 @@ export function HeroSection({
                   {copiedLink ? (
                     <>
                       <Check className="w-4 h-4 text-[#15803D]" aria-hidden="true" />
-                      Link Copied
+                      {t.linkCopied}
                     </>
                   ) : (
                     <>
                       <Copy className="w-4 h-4" aria-hidden="true" />
-                      Copy Portfolio Link
+                      {t.copyLink}
                     </>
                   )}
                 </button>
-
-                <a
-                  href={profile.pdfUrl}
-                  download="Huang_Qiyuan_CV_and_Portfolio.pdf"
-                  className="inline-flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium text-[#575652] hover:text-[#141413] transition-colors whitespace-nowrap shrink-0"
-                >
-                  <FileDown className="w-4 h-4" aria-hidden="true" />
-                  Original PDF
-                </a>
               </div>
 
               {/* Interactive Drafting Paper / Architectural Grid Surface Switcher */}
               <div className="pt-1 flex flex-wrap items-center gap-3">
                 <div
                   role="group"
-                  aria-label="Drafting canvas surface"
+                  aria-label={t.canvasGroupAria}
                   className="inline-flex items-center gap-1 p-1 bg-[#EFECE6]/90 border border-[#E2E0D8] rounded-md"
                 >
                   <button
@@ -154,7 +149,7 @@ export function HeroSection({
                     }`}
                   >
                     <FileText className="w-3.5 h-3.5" aria-hidden="true" />
-                    Drafting Paper
+                    {t.draftingPaper}
                   </button>
                   <button
                     type="button"
@@ -167,7 +162,7 @@ export function HeroSection({
                     }`}
                   >
                     <Grid2x2 className="w-3.5 h-3.5" aria-hidden="true" />
-                    Drafting Grid
+                    {t.draftingGrid}
                   </button>
                 </div>
               </div>
@@ -184,14 +179,14 @@ export function HeroSection({
             <button
               type="button"
               onClick={onOpenHeroPlate}
-              aria-label={`Inspect ${profile.heroPlateCaption}`}
+              aria-label={`${t.inspectAriaPrefix} ${profile.heroPlateCaption}`}
               className="group relative h-[360px] lg:h-[430px] w-full text-left bg-white border border-[#E5E5E0] hover:border-[#BDBBB2] rounded-xl overflow-hidden transition-all duration-220 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-20px_rgba(20,20,19,0.3)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D4ED8]"
             >
               <ArchitecturalImage
                 src={profile.heroPlateUrl}
                 alt={profile.heroPlateCaption}
                 title={profile.fullName}
-                plateNumber="PL. 00"
+                plateNumber={t.platePrefix}
                 priority
                 variant="thumbnail"
                 fit="contain"
@@ -202,7 +197,7 @@ export function HeroSection({
             </button>
             <div className="mt-2.5 flex items-center justify-between gap-4 text-xs text-[#6B6A65]">
               <span className="truncate">{profile.heroPlateCaption}</span>
-              <span className="font-mono-tabular shrink-0">Hand Drawn</span>
+              <span className="font-mono-tabular shrink-0">{t.handDrawn}</span>
             </div>
           </motion.div>
         </div>
@@ -213,25 +208,25 @@ export function HeroSection({
             <p className="font-mono-tabular text-2xl sm:text-3xl font-medium text-[#141413]">
               {profile.gpaDisplay}
             </p>
-            <p className="mt-1 text-xs text-[#575652]">NUS B.Arch · Second Upper Honours</p>
+            <p className="mt-1 text-xs text-[#575652]">{t.metrics.honours}</p>
           </div>
           <div>
             <p className="font-mono-tabular text-2xl sm:text-3xl font-medium text-[#141413]">
               {String(experienceCount).padStart(2, '0')}
             </p>
-            <p className="mt-1 text-xs text-[#575652]">Architectural Firms · SG &amp; Shanghai</p>
+            <p className="mt-1 text-xs text-[#575652]">{t.metrics.firms}</p>
           </div>
           <div>
             <p className="font-mono-tabular text-2xl sm:text-3xl font-medium text-[#141413]">
               {String(projectCount).padStart(2, '0')}
             </p>
-            <p className="mt-1 text-xs text-[#575652]">Studio, Climatic &amp; BIM Projects</p>
+            <p className="mt-1 text-xs text-[#575652]">{t.metrics.projects}</p>
           </div>
           <div>
             <p className="font-mono-tabular text-2xl sm:text-3xl font-medium text-[#141413]">
               {String(sketchCount).padStart(2, '0')}
             </p>
-            <p className="mt-1 text-xs text-[#575652]">Pen &amp; Graphite Architectural Studies</p>
+            <p className="mt-1 text-xs text-[#575652]">{t.metrics.studies}</p>
           </div>
         </div>
       </div>

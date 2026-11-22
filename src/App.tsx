@@ -20,6 +20,13 @@ const ProjectLightbox = lazy(() =>
 import { INITIAL_PORTFOLIO_DATA } from './data/initialPortfolio';
 import { auth, isAuthorizedOwner } from './firebase';
 import {
+  loadInitialLocale,
+  Locale,
+  LOCALE_STORAGE_KEY,
+  localizePortfolioData,
+  UI_TEXT,
+} from './i18n/translations';
+import {
   createProjectInFirestore,
   createSketchInFirestore,
   deleteProjectFromFirestore,
@@ -82,6 +89,7 @@ function PortfolioApp() {
   }));
   const [isSeededInCloud, setIsSeededInCloud] = useState(false);
   const [canvasSurface, setCanvasSurface] = useState<CanvasSurface>(() => loadCanvasSurface());
+  const [locale, setLocale] = useState<Locale>(() => loadInitialLocale());
   const [isOwnerRoute, setIsOwnerRoute] = useState<boolean>(() => detectAdminRoute());
 
   const [user, setUser] = useState<User | null>(null);
@@ -178,10 +186,37 @@ function PortfolioApp() {
     saveCanvasSurface(canvasSurface);
   }, [canvasSurface]);
 
-  const filteredProjects = useMemo(
-    () => filterProjects(data.projects, categoryFilter, searchQuery, activeSkill),
-    [data.projects, categoryFilter, searchQuery, activeSkill]
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+      } catch {
+        // ignore storage errors
+      }
+      document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
+      document.title = UI_TEXT[locale].pageTitle;
+    }
+  }, [locale]);
+
+  const localizedData = useMemo(
+    () => localizePortfolioData(data, locale),
+    [data, locale]
   );
+
+  const filteredProjects = useMemo(
+    () => filterProjects(localizedData.projects, categoryFilter, searchQuery, activeSkill),
+    [localizedData.projects, categoryFilter, searchQuery, activeSkill]
+  );
+
+  const activeSelectedProject = useMemo(
+    () =>
+      selectedProject
+        ? localizedData.projects.find((p) => p.id === selectedProject.id) ?? selectedProject
+        : null,
+    [selectedProject, localizedData.projects]
+  );
+
+  const toggleLocale = () => setLocale((prev) => (prev === 'en' ? 'zh' : 'en'));
 
   const publicVisitorUrl = useMemo(() => {
     if (typeof window === 'undefined') return 'https://portfolio.example.com/';
@@ -436,6 +471,8 @@ function PortfolioApp() {
   }
 
   // Public Visitor Webpage (Clean Read-Only Exhibition & Interactive CV)
+  const t = UI_TEXT[locale];
+
   return (
     <MotionConfig reducedMotion="user">
       <div
@@ -444,27 +481,33 @@ function PortfolioApp() {
           canvasSurface === 'grid' ? 'surface-grid' : 'surface-paper'
         }`}
       >
-        <Header brandName={data.profile.fullName} pdfUrl={data.profile.pdfUrl} />
+        <Header
+          brandName={localizedData.profile.fullName}
+          locale={locale}
+          onToggleLocale={toggleLocale}
+        />
 
         <main className="flex-1">
           <HeroSection
-            profile={data.profile}
-            projectCount={data.projects.length}
-            experienceCount={data.experiences.length}
-            sketchCount={data.sketches.length}
+            profile={localizedData.profile}
+            locale={locale}
+            projectCount={localizedData.projects.length}
+            experienceCount={localizedData.experiences.length}
+            sketchCount={localizedData.sketches.length}
             canvasSurface={canvasSurface}
             copiedLink={copiedLink}
             onChangeSurface={setCanvasSurface}
             onCopyShowcaseLink={handleCopyPublicLink}
             onOpenHeroPlate={() => {
-              const firstFeatured = data.projects[0];
+              const firstFeatured = localizedData.projects[0];
               if (firstFeatured) setSelectedProject(firstFeatured);
             }}
           />
 
           <SelectedWorksSection
             projects={filteredProjects}
-            totalCount={data.projects.length}
+            totalCount={localizedData.projects.length}
+            locale={locale}
             categoryFilter={categoryFilter}
             searchQuery={searchQuery}
             activeSkill={activeSkill}
@@ -475,23 +518,24 @@ function PortfolioApp() {
           />
 
           <CurriculumVitaeSection
-            experiences={data.experiences}
-            education={data.education}
-            skillGroups={data.skillGroups}
-            ventures={data.ventures}
-            communityService={data.communityService}
-            pdfUrl={data.profile.pdfUrl}
+            experiences={localizedData.experiences}
+            education={localizedData.education}
+            skillGroups={localizedData.skillGroups}
+            ventures={localizedData.ventures}
+            communityService={localizedData.communityService}
+            locale={locale}
             activeSkill={activeSkill}
             onToggleSkill={(skill) => setActiveSkill((prev) => (prev === skill ? null : skill))}
             onClearSkill={() => setActiveSkill(null)}
           />
 
-          <SketchesGallery sketches={data.sketches} />
+          <SketchesGallery sketches={localizedData.sketches} locale={locale} />
 
-          <ModelsShowcaseSection models={data.models} />
+          <ModelsShowcaseSection models={localizedData.models} locale={locale} />
 
           <ShareShowcaseSection
-            profile={data.profile}
+            profile={localizedData.profile}
+            locale={locale}
             showcaseUrl={publicVisitorUrl}
             copiedLink={copiedLink}
             onCopyShowcaseLink={handleCopyPublicLink}
@@ -501,23 +545,24 @@ function PortfolioApp() {
         <footer className="border-t border-[#E5E5E0] bg-[#FAFAF8] py-8 no-print">
           <div className="max-w-[1240px] mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6B6A65]">
             <p>
-              © {new Date().getFullYear()} {data.profile.fullName} · Architecture CV &amp; Portfolio
+              © {new Date().getFullYear()} {localizedData.profile.fullName} ·{' '}
+              {t.footerBrandSuffix}
             </p>
             <div className="flex flex-wrap items-center gap-5">
               <a href="#works" className="hover:text-[#141413] transition-colors">
-                Works
+                {t.header.nav.works}
               </a>
               <a href="#cv" className="hover:text-[#141413] transition-colors">
-                CV
+                {t.header.footerCv}
               </a>
               <a href="#sketches" className="hover:text-[#141413] transition-colors">
-                Sketches
+                {t.header.nav.sketches}
               </a>
               <a href="#models" className="hover:text-[#141413] transition-colors">
-                3D Models
+                {t.header.nav.models}
               </a>
               <a
-                href={data.profile.linkedinUrl}
+                href={localizedData.profile.linkedinUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-[#141413] transition-colors"
@@ -533,15 +578,19 @@ function PortfolioApp() {
                 className="inline-flex items-center gap-1 text-[#8A8882] hover:text-[#141413] transition-colors"
               >
                 <Lock className="w-3 h-3" aria-hidden="true" />
-                Owner Studio
+                {t.header.ownerStudio}
               </button>
             </div>
           </div>
         </footer>
 
-        {selectedProject && (
+        {activeSelectedProject && (
           <Suspense fallback={null}>
-            <ProjectLightbox project={selectedProject} onClose={() => setSelectedProject(null)} />
+            <ProjectLightbox
+              project={activeSelectedProject}
+              locale={locale}
+              onClose={() => setSelectedProject(null)}
+            />
           </Suspense>
         )}
       </div>

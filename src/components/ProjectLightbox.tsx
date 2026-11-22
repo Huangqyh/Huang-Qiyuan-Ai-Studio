@@ -1,16 +1,20 @@
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Locale, UI_TEXT } from '../i18n/translations';
 import { PortfolioProject } from '../types/portfolio';
 import { ArchitecturalImage } from './ArchitecturalImage';
 
 interface ProjectLightboxProps {
   project: PortfolioProject | null;
+  locale: Locale;
   onClose: () => void;
 }
 
-export function ProjectLightbox({ project, onClose }: ProjectLightboxProps) {
+export function ProjectLightbox({ project, locale, onClose }: ProjectLightboxProps) {
   const [plateIndex, setPlateIndex] = useState(0);
   const [zoom, setZoom] = useState<1 | 1.5 | 2>(1);
+  const t = UI_TEXT[locale].lightbox;
+  const catNames = UI_TEXT[locale].works.categories;
 
   useEffect(() => {
     setPlateIndex(0);
@@ -46,7 +50,7 @@ export function ProjectLightbox({ project, onClose }: ProjectLightboxProps) {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={`${project.title} architectural plates`}
+      aria-label={`${project.title} ${t.ariaSuffix}`}
       className="fixed inset-0 z-50 flex items-center justify-center bg-[#141413]/85 backdrop-blur-xs p-3 sm:p-6 no-print"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
@@ -59,7 +63,7 @@ export function ProjectLightbox({ project, onClose }: ProjectLightboxProps) {
           <div className="flex items-center justify-between gap-4 px-5 py-3 bg-white border-b border-[#E5E5E0]">
             <div className="flex items-center gap-2 text-xs text-[#575652] min-w-0">
               <span className="font-mono-tabular font-medium text-[#141413] shrink-0">
-                {activePlate ? activePlate.plateNumber : 'NO PLATE'}
+                {activePlate ? activePlate.plateNumber : t.noPlate}
               </span>
               {activePlate && (
                 <>
@@ -74,7 +78,7 @@ export function ProjectLightbox({ project, onClose }: ProjectLightboxProps) {
                 <button
                   type="button"
                   onClick={cycleZoom}
-                  aria-label={zoom === 2 ? 'Reset plate zoom' : 'Zoom in drawing plate'}
+                  aria-label={zoom === 2 ? t.resetZoomAria : t.zoomInAria}
                   className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-[#141413] bg-[#F3F2EE] hover:bg-[#E7E5DE] rounded-md transition-colors whitespace-nowrap"
                 >
                   {zoom > 1 ? (
@@ -96,7 +100,7 @@ export function ProjectLightbox({ project, onClose }: ProjectLightboxProps) {
                       );
                       setZoom(1);
                     }}
-                    aria-label="Previous drawing plate"
+                    aria-label={t.prevPlateAria}
                     className="inline-flex items-center justify-center w-8 h-8 rounded-md text-[#141413] hover:bg-[#EFECE6] transition-colors"
                   >
                     <ChevronLeft className="w-4 h-4" />
@@ -107,7 +111,7 @@ export function ProjectLightbox({ project, onClose }: ProjectLightboxProps) {
                       setPlateIndex((prev) => (prev + 1) % project.plates.length);
                       setZoom(1);
                     }}
-                    aria-label="Next drawing plate"
+                    aria-label={t.nextPlateAria}
                     className="inline-flex items-center justify-center w-8 h-8 rounded-md text-[#141413] hover:bg-[#EFECE6] transition-colors"
                   >
                     <ChevronRight className="w-4 h-4" />
@@ -152,7 +156,7 @@ export function ProjectLightbox({ project, onClose }: ProjectLightboxProps) {
                       setPlateIndex(idx);
                       setZoom(1);
                     }}
-                    aria-label={`View ${plate.plateNumber}: ${plate.caption}`}
+                    aria-label={t.thumbAria(plate.plateNumber, plate.caption)}
                     aria-current={isSelected ? 'true' : undefined}
                     className={`relative shrink-0 w-16 h-12 rounded-md overflow-hidden border transition-all ${
                       isSelected
@@ -190,7 +194,7 @@ export function ProjectLightbox({ project, onClose }: ProjectLightboxProps) {
               <button
                 type="button"
                 onClick={onClose}
-                aria-label="Close project viewer"
+                aria-label={t.closeAria}
                 className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#575652] hover:text-[#141413] hover:bg-[#EFECE6] transition-colors shrink-0"
               >
                 <X className="w-5 h-5" />
@@ -202,32 +206,34 @@ export function ProjectLightbox({ project, onClose }: ProjectLightboxProps) {
             {/* Technical Metadata Grid */}
             <dl className="grid grid-cols-2 gap-x-4 gap-y-3 py-4 border-y border-[#E5E5E0] text-xs mb-5">
               <div>
-                <dt className="text-[#6B6A65] mb-0.5">Category</dt>
-                <dd className="font-medium text-[#141413]">{project.category}</dd>
+                <dt className="text-[#6B6A65] mb-0.5">{t.categoryLabel}</dt>
+                <dd className="font-medium text-[#141413]">
+                  {catNames[project.category] ?? project.category}
+                </dd>
               </div>
               <div>
-                <dt className="text-[#6B6A65] mb-0.5">Scale / Deliverable</dt>
+                <dt className="text-[#6B6A65] mb-0.5">{t.scaleLabel}</dt>
                 <dd className="font-mono-tabular font-medium text-[#141413]">{project.scale}</dd>
               </div>
               <div>
-                <dt className="text-[#6B6A65] mb-0.5">Location</dt>
+                <dt className="text-[#6B6A65] mb-0.5">{t.locationLabel}</dt>
                 <dd className="font-medium text-[#141413]">{project.location}</dd>
               </div>
               <div>
-                <dt className="text-[#6B6A65] mb-0.5">Software &amp; Methods</dt>
+                <dt className="text-[#6B6A65] mb-0.5">{t.toolsLabel}</dt>
                 <dd className="font-medium text-[#141413]">{project.tools.join(', ')}</dd>
               </div>
             </dl>
 
             <div className="space-y-4">
               <div>
-                <h4 className="text-xs font-semibold text-[#141413] mb-1.5">Design Thesis</h4>
+                <h4 className="text-xs font-semibold text-[#141413] mb-1.5">{t.thesisHeading}</h4>
                 <p className="text-sm text-[#575652] leading-relaxed">{project.description}</p>
               </div>
 
               {project.highlights.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-semibold text-[#141413] mb-2">Key Deliverables</h4>
+                  <h4 className="text-xs font-semibold text-[#141413] mb-2">{t.highlightsHeading}</h4>
                   <ul className="space-y-2 text-sm text-[#575652]">
                     {project.highlights.map((item, idx) => (
                       <li key={idx} className="flex items-start gap-2.5">
@@ -244,7 +250,7 @@ export function ProjectLightbox({ project, onClose }: ProjectLightboxProps) {
           </div>
 
           <div className="px-6 py-3.5 bg-white border-t border-[#E5E5E0] flex items-center justify-between text-xs text-[#6B6A65] shrink-0">
-            <span>Use ← / → keys to browse plates</span>
+            <span>{t.browseHint}</span>
             <span className="font-mono-tabular">
               {project.plates.length > 0 ? `${plateIndex + 1} / ${project.plates.length}` : '0 / 0'}
             </span>

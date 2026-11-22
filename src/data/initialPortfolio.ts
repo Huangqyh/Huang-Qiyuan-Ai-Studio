@@ -4,7 +4,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
   profile: {
     fullName: 'Huang Qiyuan',
     roleTitle: 'Architecture Candidate · Spatial Systems & Adaptive Heritage',
-    institutionLine: 'National University of Singapore · B.Arch (Minor in Economics)',
+    institutionLine: 'National University of Singapore · M.Arch (Minor in Economics)',
     location: 'Singapore & Shanghai',
     availability: 'Open to Architectural Internships & Collaborations',
     statement:
@@ -598,7 +598,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
     {
       id: 'edu-nus',
       institution: 'National University of Singapore (NUS)',
-      degree: 'Bachelor of Architecture with Minor in Economics',
+      degree: 'Master of Architecture with Minor in Economics',
       period: 'Aug 2023 – May 2027',
       gpa: '4.20 / 5.00',
       honours: 'Second Upper Class Honours',
