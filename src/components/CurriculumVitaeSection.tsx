@@ -62,7 +62,7 @@ export function CurriculumVitaeSection({
             <button
               type="button"
               onClick={() => window.print()}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#141413] bg-white border border-[#DFDED8] hover:border-[#141413] rounded-md transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#141413] bg-white border border-[#D6D4CC] hover:border-[#9E3B2E] hover:text-[#9E3B2E] rounded-[2px] transition-colors whitespace-nowrap shrink-0"
             >
               <Printer className="w-3.5 h-3.5" aria-hidden="true" />
               {t.printCv}
@@ -76,12 +76,12 @@ export function CurriculumVitaeSection({
           <div className="lg:col-span-8 space-y-12">
             {/* Architectural Practice Experience */}
             <div>
-              <div className="flex items-center justify-between gap-4 pb-3 mb-6 border-b border-[#DFDED8]">
+              <div className="flex items-center justify-between gap-4 pb-3 mb-6 border-b border-[#D6D4CC]">
                 <h3 className="text-sm font-semibold text-[#141413]">
                   {t.experienceHeading}
                 </h3>
                 {activeSkill && (
-                  <div className="flex items-center gap-2 text-xs text-[#1D4ED8]">
+                  <div className="flex items-center gap-2 text-xs text-[#9E3B2E]">
                     <span>
                       {t.highlightingRoles} <strong>{activeSkill}</strong>
                     </span>
@@ -89,7 +89,7 @@ export function CurriculumVitaeSection({
                       type="button"
                       onClick={onClearSkill}
                       aria-label={t.clearSkillAria(activeSkill)}
-                      className="p-0.5 rounded hover:bg-[#E0EAFF]"
+                      className="p-0.5 rounded-[2px] hover:bg-[#F6ECEA]"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -107,10 +107,10 @@ export function CurriculumVitaeSection({
                     <StaggerRevealItem key={exp.id} index={expIndex}>
                       <article
                         data-highlighted={isHighlighted ? 'true' : 'false'}
-                        className={`bg-white rounded-xl border transition-all duration-150 hover:border-[#C5C4BC] print-break-avoid ${
+                        className={`bg-white rounded-[2px] border transition-all duration-150 hover:border-[#9E3B2E]/50 print-break-avoid ${
                           isHighlighted
-                            ? 'border-[#1D4ED8] ring-2 ring-[#1D4ED8]/10'
-                            : 'border-[#E5E5E0]'
+                            ? 'border-[#9E3B2E] ring-2 ring-[#9E3B2E]/10'
+                            : 'border-[#D6D4CC]'
                         } ${isDimmed ? 'opacity-50' : 'opacity-100'}`}
                       >
                       <div className="p-5 sm:p-6">
@@ -181,7 +181,7 @@ export function CurriculumVitaeSection({
 
             {/* Education */}
             <div>
-              <div className="pb-3 mb-6 border-b border-[#DFDED8]">
+              <div className="pb-3 mb-6 border-b border-[#D6D4CC]">
                 <h3 className="text-sm font-semibold text-[#141413]">{t.educationHeading}</h3>
               </div>
 
@@ -189,7 +189,7 @@ export function CurriculumVitaeSection({
                 {education.map((edu) => (
                   <article
                     key={edu.id}
-                    className="bg-white border border-[#E5E5E0] rounded-xl p-5 sm:p-6 print-break-avoid"
+                    className="bg-white border border-[#D6D4CC] rounded-[2px] p-5 sm:p-6 print-break-avoid"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 mb-2">
                       <h4 className="font-editorial text-2xl font-semibold text-[#141413]">
@@ -221,7 +221,7 @@ export function CurriculumVitaeSection({
 
             {/* Independent Fabrication & Real Estate Services */}
             <div>
-              <div className="pb-3 mb-6 border-b border-[#DFDED8]">
+              <div className="pb-3 mb-6 border-b border-[#D6D4CC]">
                 <h3 className="text-sm font-semibold text-[#141413]">{t.venturesHeading}</h3>
               </div>
 
@@ -229,16 +229,20 @@ export function CurriculumVitaeSection({
                 {ventures.map((venture) => (
                   <article
                     key={venture.id}
-                    className="bg-white border border-[#E5E5E0] rounded-xl p-5 print-break-avoid"
+                    className="bg-white border border-[#D6D4CC] rounded-[2px] p-5 print-break-avoid"
                   >
-                    <p className="text-xs text-[#6B6A65] mb-1">{venture.category}</p>
+                    <p className="font-mono-tabular uppercase tracking-wider text-[11px] text-[#6B6A65] mb-1">
+                      {venture.category}
+                    </p>
                     <h4 className="font-editorial text-xl font-semibold text-[#141413] mb-2">
                       {venture.title}
                     </h4>
                     <p className="text-sm text-[#575652] leading-relaxed mb-3">
                       {venture.summary}
                     </p>
-                    <p className="text-xs text-[#6B6A65]">{venture.tools.join(' · ')}</p>
+                    <p className="font-mono-tabular text-[11px] text-[#6B6A65]">
+                      {venture.tools.join(' · ')}
+                    </p>
                   </article>
                 ))}
               </div>
@@ -248,14 +252,14 @@ export function CurriculumVitaeSection({
           {/* Right Sidebar: Interactive Skills Matrix & Community Leadership */}
           <div className="lg:col-span-4 space-y-10">
             {/* Interactive Software & Technical Skills Matrix */}
-            <div className="bg-white border border-[#E5E5E0] rounded-xl p-6 print-break-avoid">
+            <div className="bg-white border border-[#D6D4CC] rounded-[2px] p-6 print-break-avoid">
               <div className="flex items-start justify-between gap-2 mb-2">
                 <h3 className="text-sm font-semibold text-[#141413]">{t.skillsHeading}</h3>
                 {activeSkill && (
                   <button
                     type="button"
                     onClick={onClearSkill}
-                    className="no-print text-xs font-medium text-[#1D4ED8] hover:underline"
+                    className="no-print text-xs font-medium text-[#9E3B2E] hover:underline"
                   >
                     {t.resetSkill}
                   </button>
@@ -265,8 +269,8 @@ export function CurriculumVitaeSection({
 
               <div className="space-y-5">
                 {skillGroups.map((group) => (
-                  <div key={group.id} className="pb-4 border-b border-[#F0EFEA] last:border-b-0 last:pb-0">
-                    <h4 className="text-xs font-medium text-[#6B6A65] mb-2.5">
+                  <div key={group.id} className="pb-4 border-b border-[#ECEAE2] last:border-b-0 last:pb-0">
+                    <h4 className="font-mono-tabular uppercase tracking-wider text-[11px] font-medium text-[#6B6A65] mb-2.5">
                       {group.category}
                     </h4>
                     <div className="flex flex-wrap gap-1.5">
@@ -278,10 +282,10 @@ export function CurriculumVitaeSection({
                             type="button"
                             aria-pressed={isSelected}
                             onClick={() => onToggleSkill(skill)}
-                            className={`px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors duration-150 whitespace-nowrap ${
+                            className={`px-2.5 py-1.5 text-xs font-medium rounded-[2px] border transition-colors duration-150 whitespace-nowrap ${
                               isSelected
-                                ? 'bg-[#1D4ED8] text-white'
-                                : 'bg-[#F3F2EE] text-[#2C2C2A] hover:bg-[#E5E4DC]'
+                                ? 'bg-[#9E3B2E] text-white border-[#9E3B2E]'
+                                : 'bg-[#F3F2EE] text-[#2C2C2A] border-[#E0DED6] hover:border-[#9E3B2E]/50'
                             }`}
                           >
                             {skill}
@@ -295,7 +299,7 @@ export function CurriculumVitaeSection({
             </div>
 
             {/* Community Service */}
-            <div className="bg-white border border-[#E5E5E0] rounded-xl p-6 print-break-avoid">
+            <div className="bg-white border border-[#D6D4CC] rounded-[2px] p-6 print-break-avoid">
               <h3 className="text-sm font-semibold text-[#141413] pb-3 mb-5 border-b border-[#F0EFEA]">
                 {t.communityHeading}
               </h3>

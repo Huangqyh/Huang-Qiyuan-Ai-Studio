@@ -21,7 +21,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
     {
       id: 'permeable-sports-corridor',
       title: 'Permeable Sports Corridor',
-      subtitle: 'Modular Tubular Rib Spine & Adaptive Civic Sports Infrastructure',
+      subtitle: 'Modular Tubular Rib Spine & Civic Sports Infrastructure',
       category: 'NUS Year 3',
       year: '2026',
       studioOrContext: 'NUS Design Studio · Year 3 Sem 2',
@@ -29,7 +29,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       scale: '1:200 & A0 Spreads',
       tools: ['Rhino', 'AutoCAD', 'Illustrator', 'Photoshop'],
       summary:
-        'A curved, modular tubular sports corridor bridging an outdoor running track and indoor stadium through rhythmic skeletal ribs, permeable mesh activity layers, and a dual-use civic ground plane.',
+        'A curved modular sports corridor bridging an outdoor running track and indoor stadium through hinged skeletal ribs, permeable activity decks, and a shared civic ground plane.',
       description:
         'Developed from urban design probes investigating fences (elements of movement) and drains (elements of pause), this Year 3 Semester 2 studio project weaves a serpentine sports corridor between an outdoor running track and an indoor stadium. Choreographed across a spatial gradient—from an open, porous running-track threshold through sheltered mid-corridor training pockets to a monolithic indoor stadium shell—the hinged rib-and-tube tectonic system houses closed dance studios, tall climbing shafts, and open recreational decks above a flexible dual-use carpark and water-collection ground floor.',
       highlights: [
@@ -107,7 +107,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
     {
       id: '3rs-heritage-rethought',
       title: "3R's V.2 — Heritage Rethought",
-      subtitle: 'Adaptive Kit-of-Parts Conservation Framework for Singapore Shophouses',
+      subtitle: 'Kit-of-Parts Conservation Framework for Singapore Shophouses',
       category: 'NUS Year 3',
       year: '2025',
       studioOrContext: 'NUS Studio CM · Year 3 Sem 1',
@@ -115,7 +115,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       scale: '1:50 & 1:100',
       tools: ['Rhino', 'AutoCAD', 'Illustrator', 'Photoshop'],
       summary:
-        'Rethinking conservation beyond static façadism by disassembling Singapore shophouses into an adaptable architectural kit-of-parts for clinics, restaurants, and museums.',
+        'Living conservation system disassembling traditional Singapore shophouses into an adaptable kit-of-parts for clinics, restaurants, and museums.',
       description:
         'Observing the tension between strict retention policies and evolving contemporary urban life in Singapore’s shophouse districts, this thesis proposes a living conservation system. Through understanding, disassembly, reassembly, and refinement, elemental parts—roofs, walls, columns, frames, and thresholds—are catalogued and redeployed across multiple urban sites under three distinct repair strategies: Selective Retention (The Restaurant), Corrective Restoration (The Clinic), and Creative Repair (The Museum).',
       highlights: [
@@ -185,8 +185,8 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
     },
     {
       id: 'bend-boo-climatic-facade',
-      title: 'Bend-Boo — Climatic Bamboo Retrofit',
-      subtitle: 'Passive Venturi Ventilation & Curved Bamboo Facade for NUS COM 2',
+      title: 'Bend-Boo — Climatic Bamboo Facade',
+      subtitle: 'Passive Venturi Ventilation Retrofit for NUS COM 2',
       category: 'NUS Year 2',
       year: '2025',
       studioOrContext: 'NUS Climate Ecology & Architecture · Year 2',
@@ -194,7 +194,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       scale: '1:50 Physical Model',
       tools: ['Rhino', 'Climate Studio', 'CFD', 'Illustrator', 'Photoshop'],
       summary:
-        'A bio-climatic facade and roof retrofit combining undulating bamboo shading, Venturi wind shafts, and daylight tunnels to reduce cooling and lighting energy loads.',
+        'Bio-climatic curved bamboo facade paired with Venturi roof cowls and daylight shafts to cool tropical academic floorplates passively.',
       description:
         'Designed to transform repetitive academic floorplates at COM 2 into differentiated, naturally comfortable spaces. By evolving from rigid straight shading screens to a continuous curved bamboo envelope, each room gains a distinct daylight profile and view corridor. Paired with Venturi roof cowls, translucent vertical wind shafts, and movable 3rd-floor acoustic panels, the building harnesses prevailing tropical breezes and indirect sunlight.',
       highlights: [
@@ -250,8 +250,8 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
     },
     {
       id: 'open-celmer',
-      title: 'Open-Celmer × Oppenheimer — A Tale of 2 Sides',
-      subtitle: 'Two-Part Cinematic Spatial Translation & Structural Volumetric Aggregation',
+      title: 'Open-Celmer × Oppenheimer',
+      subtitle: 'Cinematic Spatial Translation & Modular Timber Aggregation',
       category: 'NUS Year 2',
       year: '2024',
       studioOrContext: 'NUS Studio Shin Yokoo (Unit 2) · Year 2',
@@ -259,7 +259,8 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       scale: '1:50 & 1:100',
       tools: ['Rhino', 'AutoCAD', 'Illustrator', 'Photoshop'],
       summary:
-        'A two-part architectural thesis translating Christopher Nolan’s Oppenheimer and Tanjong Pagar’s nature-versus-city duality into interlocking emotive spatial units (Part I) aggregated into a high-density structural frame with a sinuous natural void (Part II).',
+        'Modular basswood dwelling units aggregated around a sculpted concrete core and orange exterior stair matrix on an infill plot in Tanjong Pagar.',
+      featured: true,
       description:
         'Developed across two consecutive phases in NUS Studio Shin Yokoo (Unit 2), this project pairs narrative spatial extraction with structural aggregation on an urban infill site along Tanjong Pagar Road, Tras Street, and Wallich Street. Part I (Oppenheimer — A Tale of 2 Sides) translates cinematic light-shadow dichotomies and the five stages of grief into jagged, man-made incisions, inaccessible openings, and calibrated light wells. Part II (Open-Celmer) weaves those modular A/B/C unit permutations around a flowing, organic central void supported by reinforced concrete cores and deep steel shear beams—balancing high-density urban living with greenery, cross-ventilation, and inter-level exterior staircases.',
       highlights: [
@@ -413,8 +414,8 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
     },
     {
       id: 'the-flow-form-finding',
-      title: 'The Flow — Fluid & Kinetic Form-Finding',
-      subtitle: 'Experimental Soda-Eruption Simulations, Rock-Climbing Movement Mapping & Material Studies',
+      title: 'The Flow — Kinetic Form-Finding',
+      subtitle: 'Fluid Eruption Simulations & Rock-Climbing Balance Studies',
       category: 'NUS Year 1',
       year: '2023',
       studioOrContext: 'NUS Studio AL (Unit 3) · Year 1',
@@ -429,7 +430,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
         'Physical Modeling',
       ],
       summary:
-        'An experimental Year 1 form-finding studio translating Mentos-soda fluid eruptions (Flexhopper simulations and wax/greyboard/wood castings) and rock-climbing body balance into lofted sculptural architecture.',
+        'Year 1 form-finding thesis translating fluid eruption trajectories and rock-climbing balance vectors into cast wax, wood, and waffle-grid sculptures.',
       description:
         'Developed in NUS Studio AL (Unit 3) during Year 1, this two-panel investigation extracts spatial form from ephemeral physical forces and human kinetics. Part I (The Flow) records CO2 eruption trajectories across Coke, Pepsi, and Kickapoo with varying Mentos dosages via dual-plane camera tracking, translating the captured motion into parametric particle simulations in Rhino/Grasshopper (Flexhopper) and iterative material casts in wax, greyboard, wood, and 3D prints. Part II (Balance & Kinetic Lofting) maps vertical, sideways, and diagonal rock-climbing sequences into a hand-drawn isometric BALANCE study contrasting opposing limb forces, culminating in conical-lofted negative-space sculptures fabricated as laser-cut waffle sections and cast ribbed prototypes.',
       highlights: [
@@ -560,10 +561,9 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       period: 'Jun 2025 – Aug 2025',
       tools: ['Rhino', 'Illustrator', 'Photoshop'],
       highlights: [
-        'Completed a two-month overseas internship in Shanghai at an internationally renowned German-founded architectural practice.',
-        'Bridged cross-cultural communication between English- and Chinese-speaking design teams to maintain seamless studio coordination.',
-        'Assisted in proof-of-concept proposals, client presentations, and multidisciplinary design team meetings.',
-        'Produced 3D Rhino models, analytical diagrams in Illustrator, and polished presentation visuals in Photoshop under tight project deadlines.',
+        'Completed a two-month architectural traineeship in GMP’s Shanghai studio across international competition and concept schemes.',
+        'Built iterative Rhino 3D massing options, Illustrator analytical diagrams, and Photoshop presentation boards for senior design reviews.',
+        'Bridged bilingual technical reviews between English- and Chinese-speaking design teams to keep competition schedules aligned.',
       ],
     },
     {
@@ -574,10 +574,9 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       period: 'Jun 2024 – Aug 2024',
       tools: ['AutoCAD', 'Revit', 'SketchUp'],
       highlights: [
-        'Contributed 3D models, architectural diagrams, and renderings for active commercial and civic projects.',
-        'Supported technical drafting and design refinement of structural plans and master layouts in AutoCAD, Revit, and SketchUp.',
-        'Participated in client meetings and statutory submissions to Singapore government agencies including URA and LTA.',
-        'Prepared clear project slide decks and coordinated design documentation for senior architects.',
+        'Produced Rhino/SketchUp massing models, Revit model updates, and AutoCAD plan revisions for active commercial and civic developments.',
+        'Prepared statutory submission drawing sets and area schedules reviewed by Singapore agencies including URA and LTA.',
+        'Compiled client presentation slide decks and coordinated consultant markups with project architects.',
       ],
     },
     {
@@ -588,9 +587,8 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
       period: 'Jan 2021 – Apr 2021',
       tools: ['Revit', 'AutoCAD'],
       highlights: [
-        'Gained early hands-on exposure to architectural studio workflows and professional documentation standards.',
-        'Self-taught Revit and AutoCAD to deliver accurate 3D architectural models and 2D technical drawings.',
-        'Built foundational competence in architectural drawing coordination and design revision workflows.',
+        'Self-taught Revit and AutoCAD on the job to model spatial layouts and draft 2D construction documentation.',
+        'Maintained drawing revision logs and coordinated CAD layer standards under senior studio guidance.',
       ],
     },
   ],
@@ -617,12 +615,12 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
     {
       id: 'sg-autodesk',
       category: 'Autodesk & BIM',
-      items: ['AutoCAD', 'Revit', 'CFD'],
+      items: ['AutoCAD', 'Revit'],
     },
     {
       id: 'sg-modeling',
       category: '3D Modeling & Climate',
-      items: ['Rhino', 'SketchUp', 'Climate Studio'],
+      items: ['Rhino', 'SketchUp', 'Climate Studio', 'CFD'],
     },
     {
       id: 'sg-adobe',
@@ -804,8 +802,8 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
   models: [
     {
       id: 'y3s2-permeable-sports-corridor',
-      title: 'Permeable Sports Corridor — Active "Growing" Community Center',
-      subtitle: 'Modular Tubular Rib Spine, Hinged Arches & Adaptive Civic Sports Infrastructure',
+      title: 'Permeable Sports Corridor',
+      subtitle: 'Modular Tubular Rib Spine & Civic Sports Infrastructure',
       year: '2026',
       studioOrContext: 'NUS Year 3 · Semester 2 (Studio CLR)',
       scale: '1:200 Physical & Digital Model',
@@ -845,8 +843,8 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
     },
     {
       id: 'y3s1-model',
-      title: "3R's V.2 — Heritage Rethought",
-      subtitle: 'Adaptive Kit-of-Parts Conservation Framework for Singapore Shophouses',
+      title: "3R's V.2 — Shophouse Kit",
+      subtitle: 'Kit-of-Parts Conservation Model for Singapore Shophouses',
       year: '2025',
       studioOrContext: 'NUS Year 3 · Semester 1 (Studio CM)',
       scale: '1:50 & 1:100 Digital Model',
@@ -886,7 +884,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
     },
     {
       id: 'y2s2-bend-boo',
-      title: 'Bend-Boo — Climatic Bamboo Retrofit',
+      title: 'Bend-Boo',
       subtitle: 'Passive Venturi Ventilation & Curved Bamboo Facade for NUS COM 2',
       year: '2025',
       studioOrContext: 'NUS Year 2 · Semester 2 (Climate Ecology & Architecture)',
@@ -927,7 +925,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
     },
     {
       id: 'ar2328-structural-systems',
-      title: 'AR2328 — Architectural Tectonics & Structural Systems',
+      title: 'AR2328 Structural Systems',
       subtitle: 'Reinforced Concrete, Structural Steel & Form-Active Span Studies',
       year: '2024',
       studioOrContext: 'NUS Year 2 · AR2328 Structural Systems',
@@ -998,7 +996,7 @@ export const INITIAL_PORTFOLIO_DATA: PortfolioData = {
     },
     {
       id: 'y2s1-open-celmer',
-      title: 'Open-Celmer × Oppenheimer — Residential Complex',
+      title: 'Open-Celmer × Oppenheimer',
       subtitle: 'Modular Timber Pods, Sculpted RC Core & Orange Circulation Matrix',
       year: '2024',
       studioOrContext: 'NUS Year 2 · Semester 1 (Studio Shin Yokoo)',

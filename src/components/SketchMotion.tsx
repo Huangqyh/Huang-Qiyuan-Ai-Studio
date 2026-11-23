@@ -61,7 +61,7 @@ export function InkUnderline({ className = '', accent = false }: InkUnderlinePro
       fill="none"
       aria-hidden="true"
       className={`h-2.5 w-28 mt-1.5 overflow-visible no-print ${
-        accent ? 'text-[#1D4ED8]/70' : 'text-[#141413]/35'
+        accent ? 'text-[#9E3B2E]/80' : 'text-[#141413]/35'
       } ${className}`}
     >
       <motion.path

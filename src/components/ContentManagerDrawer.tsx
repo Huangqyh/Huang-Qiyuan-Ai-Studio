@@ -399,14 +399,14 @@ export function ContentManagerDrawer({
       {statusMessage && (
         <div
           role="status"
-          className="px-6 py-2.5 bg-[#EFF6FF] border-b border-[#BFDBFE] text-xs font-medium text-[#1E40AF] flex items-center justify-between gap-3"
+          className="px-6 py-2.5 bg-[#F6ECEA] border-b border-[#D6B3AC] text-xs font-medium text-[#7F2D22] flex items-center justify-between gap-3"
         >
           <span>{statusMessage}</span>
           <button
             type="button"
             onClick={() => setStatusMessage(null)}
             aria-label="Dismiss notification"
-            className="text-[#1E40AF] hover:underline"
+            className="text-[#7F2D22] hover:underline"
           >
             Dismiss
           </button>
@@ -437,7 +437,7 @@ export function ContentManagerDrawer({
                         setProjectForm((prev) => ({ ...prev, title: e.target.value }))
                       }
                       placeholder="e.g. Jurong Lake Timber Pavilion"
-                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                     />
                     {projectErrors.title && (
                       <p role="alert" className="mt-1 text-xs text-[#B91C1C]">
@@ -462,7 +462,7 @@ export function ContentManagerDrawer({
                           category: e.target.value as ProjectCategory,
                         }))
                       }
-                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                     >
                       <option value="NUS Year 3">NUS Year 3</option>
                       <option value="NUS Year 2">NUS Year 2</option>
@@ -488,7 +488,7 @@ export function ContentManagerDrawer({
                       setProjectForm((prev) => ({ ...prev, subtitle: e.target.value }))
                     }
                     placeholder="e.g. Mass-Timber Waterfront Community Canopy"
-                    className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                    className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                   />
                 </div>
 
@@ -508,7 +508,7 @@ export function ContentManagerDrawer({
                         setProjectForm((prev) => ({ ...prev, year: e.target.value }))
                       }
                       placeholder="2026"
-                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                     />
                     {projectErrors.year && (
                       <p role="alert" className="mt-1 text-xs text-[#B91C1C]">
@@ -531,7 +531,7 @@ export function ContentManagerDrawer({
                         setProjectForm((prev) => ({ ...prev, scale: e.target.value }))
                       }
                       placeholder="1:50"
-                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                     />
                   </div>
                   <div>
@@ -549,7 +549,7 @@ export function ContentManagerDrawer({
                         setProjectForm((prev) => ({ ...prev, location: e.target.value }))
                       }
                       placeholder="Singapore"
-                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                     />
                   </div>
                 </div>
@@ -569,7 +569,7 @@ export function ContentManagerDrawer({
                       setProjectForm((prev) => ({ ...prev, toolsRaw: e.target.value }))
                     }
                     placeholder="Rhino, Revit, Enscape, Illustrator"
-                    className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                    className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                   />
                   {projectErrors.toolsRaw && (
                     <p role="alert" className="mt-1 text-xs text-[#B91C1C]">
@@ -593,7 +593,7 @@ export function ContentManagerDrawer({
                       setProjectForm((prev) => ({ ...prev, summary: e.target.value }))
                     }
                     placeholder="Concise thesis displayed on the portfolio card."
-                    className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                    className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                   />
                   {projectErrors.summary && (
                     <p role="alert" className="mt-1 text-xs text-[#B91C1C]">
@@ -617,7 +617,7 @@ export function ContentManagerDrawer({
                       setProjectForm((prev) => ({ ...prev, highlightsRaw: e.target.value }))
                     }
                     placeholder={'Developed 1:50 section perspective\nTested daylight performance in Climate Studio'}
-                    className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                    className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                   />
                 </div>
 
@@ -626,7 +626,7 @@ export function ContentManagerDrawer({
                     <span className="text-xs font-medium text-[#2C2C2A]">
                       Primary Drawing Plate / Render (optional)
                     </span>
-                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#1D4ED8] bg-[#EFF4FF] hover:bg-[#E0EAFF] rounded-md cursor-pointer">
+                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#9E3B2E] bg-[#F6ECEA] hover:bg-[#EEDCD8] rounded-md cursor-pointer">
                       <Upload className="w-3.5 h-3.5" aria-hidden="true" />
                       Upload Image
                       <input
@@ -645,7 +645,7 @@ export function ContentManagerDrawer({
                       setProjectForm((prev) => ({ ...prev, imageUrl: e.target.value }))
                     }
                     placeholder="Or paste an image URL..."
-                    className="w-full px-3 py-1.5 text-xs bg-[#FAF9F6] border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                    className="w-full px-3 py-1.5 text-xs bg-[#FAF9F6] border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                   />
                   {projectErrors.imageUrl && (
                     <p role="alert" className="text-xs text-[#B91C1C]">
@@ -656,7 +656,7 @@ export function ContentManagerDrawer({
 
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-[#1D4ED8] hover:bg-[#1E40AF] rounded-md transition-colors"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-[#9E3B2E] hover:bg-[#7F2D22] rounded-md transition-colors"
                 >
                   <Plus className="w-4 h-4" aria-hidden="true" />
                   Save Project to Portfolio
@@ -720,7 +720,7 @@ export function ContentManagerDrawer({
                         setExpForm((prev) => ({ ...prev, company: e.target.value }))
                       }
                       placeholder="e.g. WOHA Architects"
-                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                     />
                     {expErrors.company && (
                       <p role="alert" className="mt-1 text-xs text-[#B91C1C]">
@@ -742,7 +742,7 @@ export function ContentManagerDrawer({
                       value={expForm.role}
                       onChange={(e) => setExpForm((prev) => ({ ...prev, role: e.target.value }))}
                       placeholder="Architectural Intern"
-                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                     />
                     {expErrors.role && (
                       <p role="alert" className="mt-1 text-xs text-[#B91C1C]">
@@ -768,7 +768,7 @@ export function ContentManagerDrawer({
                         setExpForm((prev) => ({ ...prev, period: e.target.value }))
                       }
                       placeholder="May 2026 – Aug 2026"
-                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                     />
                     {expErrors.period && (
                       <p role="alert" className="mt-1 text-xs text-[#B91C1C]">
@@ -792,7 +792,7 @@ export function ContentManagerDrawer({
                         setExpForm((prev) => ({ ...prev, location: e.target.value }))
                       }
                       placeholder="Singapore"
-                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                      className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                     />
                   </div>
                 </div>
@@ -812,7 +812,7 @@ export function ContentManagerDrawer({
                       setExpForm((prev) => ({ ...prev, toolsRaw: e.target.value }))
                     }
                     placeholder="Rhino, Revit, Enscape"
-                    className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                    className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                   />
                 </div>
 
@@ -831,7 +831,7 @@ export function ContentManagerDrawer({
                       setExpForm((prev) => ({ ...prev, highlightsRaw: e.target.value }))
                     }
                     placeholder={'Prepared tender drawings in Revit\nCoordinated facade studies for client reviews'}
-                    className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                    className="w-full px-3 py-2 text-sm bg-white border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                   />
                   {expErrors.highlightsRaw && (
                     <p role="alert" className="mt-1 text-xs text-[#B91C1C]">
@@ -842,7 +842,7 @@ export function ContentManagerDrawer({
 
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-[#1D4ED8] hover:bg-[#1E40AF] rounded-md transition-colors"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-[#9E3B2E] hover:bg-[#7F2D22] rounded-md transition-colors"
                 >
                   <Plus className="w-4 h-4" aria-hidden="true" />
                   Save Experience
@@ -926,7 +926,7 @@ export function ContentManagerDrawer({
                             setNewSkillText((prev) => ({ ...prev, [group.id]: e.target.value }))
                           }
                           placeholder={`Add to ${group.category}...`}
-                          className="flex-1 px-3 py-1.5 text-xs bg-[#FAF9F6] border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#1D4ED8]"
+                          className="flex-1 px-3 py-1.5 text-xs bg-[#FAF9F6] border border-[#DFDED8] rounded-md focus:outline-none focus:border-[#9E3B2E]"
                         />
                         <button
                           type="button"
@@ -937,7 +937,7 @@ export function ContentManagerDrawer({
                             setNewSkillText((prev) => ({ ...prev, [group.id]: '' }));
                             notify(`Added "${val}" to ${group.category}.`);
                           }}
-                          className="px-3 py-1.5 text-xs font-medium text-white bg-[#141413] hover:bg-[#1D4ED8] rounded-md transition-colors"
+                          className="px-3 py-1.5 text-xs font-medium text-white bg-[#141413] hover:bg-[#9E3B2E] rounded-md transition-colors"
                         >
                           Add
                         </button>
@@ -1041,7 +1041,7 @@ export function ContentManagerDrawer({
                 </div>
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#1D4ED8] hover:bg-[#1E40AF] rounded-md transition-colors"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#9E3B2E] hover:bg-[#7F2D22] rounded-md transition-colors"
                 >
                   <Plus className="w-4 h-4" aria-hidden="true" />
                   Add Service Entry
@@ -1168,7 +1168,7 @@ export function ContentManagerDrawer({
                 <div className="p-4 bg-white border border-[#E5E5E0] rounded-lg space-y-2.5">
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-xs font-medium text-[#2C2C2A]">Sketch Image *</span>
-                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#1D4ED8] bg-[#EFF4FF] hover:bg-[#E0EAFF] rounded-md cursor-pointer">
+                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#9E3B2E] bg-[#F6ECEA] hover:bg-[#EEDCD8] rounded-md cursor-pointer">
                       <Upload className="w-3.5 h-3.5" aria-hidden="true" />
                       Upload Sketch
                       <input
@@ -1198,7 +1198,7 @@ export function ContentManagerDrawer({
 
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-[#1D4ED8] hover:bg-[#1E40AF] rounded-md transition-colors"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-[#9E3B2E] hover:bg-[#7F2D22] rounded-md transition-colors"
                 >
                   <Plus className="w-4 h-4" aria-hidden="true" />
                   Save Sketch
@@ -1424,7 +1424,7 @@ export function ContentManagerDrawer({
                     <span className="text-xs font-medium text-[#2C2C2A]">
                       3D Model Asset (.glb / .obj) *
                     </span>
-                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#1D4ED8] bg-[#EFF4FF] hover:bg-[#E0EAFF] rounded-md cursor-pointer">
+                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#9E3B2E] bg-[#F6ECEA] hover:bg-[#EEDCD8] rounded-md cursor-pointer">
                       <Upload className="w-3.5 h-3.5" aria-hidden="true" />
                       {uploadingModel ? 'Uploading...' : 'Upload .GLB / .OBJ'}
                       <input
@@ -1455,7 +1455,7 @@ export function ContentManagerDrawer({
 
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-[#1D4ED8] hover:bg-[#1E40AF] rounded-md transition-colors"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-[#9E3B2E] hover:bg-[#7F2D22] rounded-md transition-colors"
                 >
                   <Plus className="w-4 h-4" aria-hidden="true" />
                   Save 3D Model
@@ -1540,7 +1540,7 @@ export function ContentManagerDrawer({
                           placeholder="Companion photo caption (e.g. 1:100 basswood physical model)..."
                           className="flex-1 px-3 py-1.5 text-xs bg-[#FAF9F6] border border-[#DFDED8] rounded-md"
                         />
-                        <label className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#1D4ED8] bg-[#EFF4FF] hover:bg-[#E0EAFF] rounded-md cursor-pointer whitespace-nowrap shrink-0">
+                        <label className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#9E3B2E] bg-[#F6ECEA] hover:bg-[#EEDCD8] rounded-md cursor-pointer whitespace-nowrap shrink-0">
                           <Upload className="w-3.5 h-3.5" aria-hidden="true" />
                           {uploadingPhotoModelId === model.id ? 'Uploading...' : 'Add Photo'}
                           <input
@@ -1570,7 +1570,7 @@ export function ContentManagerDrawer({
                   <button
                     type="submit"
                     disabled={!profileDirty || isSaving}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#1D4ED8] hover:bg-[#1E40AF] disabled:opacity-50 disabled:cursor-not-allowed rounded-md transition-colors"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#9E3B2E] hover:bg-[#7F2D22] disabled:opacity-50 disabled:cursor-not-allowed rounded-md transition-colors"
                   >
                     <Save className="w-3.5 h-3.5" aria-hidden="true" />
                     {isSaving ? 'Saving...' : 'Save Profile Changes'}

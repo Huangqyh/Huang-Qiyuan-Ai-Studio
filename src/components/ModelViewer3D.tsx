@@ -1,10 +1,11 @@
-import { Maximize2, Minimize2, RotateCcw, RefreshCw } from 'lucide-react';
+import { Camera, Maximize2, Minimize2, RotateCcw, RefreshCw } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { Locale, UI_TEXT } from '../i18n/translations';
+import { resolveThumbnailSrc } from './ArchitecturalImage';
 
 export type RenderMode = 'clay' | 'materials' | 'wireframe';
 
@@ -13,6 +14,8 @@ interface ModelViewer3DProps {
   format: 'glb' | 'obj';
   title: string;
   locale: Locale;
+  posterImageUrl?: string;
+  onSwitchToPhotos?: () => void;
   /** Live viewport visibility from IntersectionObserver; pauses rendering when scrolled away. */
   isVisible?: boolean;
 }
@@ -125,9 +128,12 @@ export function ModelViewer3D({
   format,
   title,
   locale,
+  posterImageUrl,
+  onSwitchToPhotos,
   isVisible = true,
 }: ModelViewer3DProps) {
   const t = UI_TEXT[locale].viewer3d;
+  const posterThumbUrl = resolveThumbnailSrc(posterImageUrl) || posterImageUrl;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const canvasHostRef = useRef<HTMLDivElement>(null);
 
@@ -607,15 +613,15 @@ export function ModelViewer3D({
   return (
     <div
       ref={wrapperRef}
-      className="relative flex flex-col w-full h-full min-h-[440px] sm:min-h-[520px] bg-[#F5F4EF] border border-[#E5E5E0] rounded-xl overflow-hidden select-none"
+      className="relative flex flex-col w-full h-full min-h-[440px] sm:min-h-[520px] bg-[#F5F4EF] border border-[#D6D4CC] rounded-[2px] overflow-hidden select-none"
       aria-label={t.viewportAria(title)}
     >
       {/* Top Toolbar (solid drafting surface, zero backdrop-blur over WebGL) */}
-      <div className="z-10 px-3.5 py-2.5 bg-[#FAFAF8] border-b border-[#E5E5E0] flex flex-wrap items-center justify-between gap-2">
+      <div className="z-10 px-3.5 py-2.5 bg-[#FAFAF8] border-b border-[#D6D4CC] flex flex-wrap items-center justify-between gap-2">
         <div
           role="group"
           aria-label={t.renderModeAria}
-          className="inline-flex items-center gap-1 p-0.5 bg-[#EFECE6] border border-[#E2E0D8] rounded-md"
+          className="inline-flex items-center gap-1 p-0.5 bg-[#EFECE6] border border-[#D6D4CC] rounded-[2px]"
         >
           {(
             [
@@ -630,9 +636,9 @@ export function ModelViewer3D({
                 key={mode.id}
                 type="button"
                 onClick={() => setRenderMode(mode.id)}
-                className={`px-2.5 py-1 text-xs font-medium rounded transition-colors ${
+                className={`px-2.5 py-1 text-xs font-medium rounded-[1px] transition-colors ${
                   active
-                    ? 'bg-white text-[#141413] shadow-xs'
+                    ? 'bg-white text-[#141413] shadow-2xs'
                     : 'text-[#575652] hover:text-[#141413]'
                 }`}
               >
@@ -647,10 +653,10 @@ export function ModelViewer3D({
             type="button"
             onClick={() => setAutoRotate((prev) => !prev)}
             aria-pressed={autoRotate}
-            className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded border transition-colors ${
+            className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-[2px] border transition-colors ${
               autoRotate
-                ? 'bg-[#1D4ED8] text-white border-[#1D4ED8]'
-                : 'bg-white text-[#2C2C2A] border-[#DFDED8] hover:border-[#141413]'
+                ? 'bg-[#9E3B2E] text-white border-[#9E3B2E]'
+                : 'bg-white text-[#2C2C2A] border-[#D6D4CC] hover:border-[#9E3B2E]'
             }`}
           >
             <RefreshCw className={`w-3 h-3 ${autoRotate ? 'animate-spin' : ''}`} aria-hidden="true" />
@@ -661,7 +667,7 @@ export function ModelViewer3D({
             type="button"
             onClick={handleResetView}
             title={t.resetTitle}
-            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white text-[#2C2C2A] border border-[#DFDED8] hover:border-[#141413] rounded transition-colors"
+            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-white text-[#2C2C2A] border border-[#D6D4CC] hover:border-[#9E3B2E] rounded-[2px] transition-colors"
           >
             <RotateCcw className="w-3 h-3" aria-hidden="true" />
             {t.reset}
@@ -671,7 +677,7 @@ export function ModelViewer3D({
             type="button"
             onClick={handleToggleFullscreen}
             aria-label={isFullscreen ? t.exitFullscreen : t.enterFullscreen}
-            className="inline-flex items-center justify-center w-7 h-7 bg-white text-[#2C2C2A] border border-[#DFDED8] hover:border-[#141413] rounded transition-colors"
+            className="inline-flex items-center justify-center w-7 h-7 bg-white text-[#2C2C2A] border border-[#D6D4CC] hover:border-[#9E3B2E] rounded-[2px] transition-colors"
           >
             {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
           </button>
@@ -683,30 +689,68 @@ export function ModelViewer3D({
         <div ref={canvasHostRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
 
         {isLoading && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#F5F4EF]/95 px-6 text-center">
-            <p className="font-mono-tabular text-xs text-[#6B6A65] mb-2">
-              {t.loading} {loadProgress > 0 ? `${loadProgress}%` : ''}
-            </p>
-            <div className="w-52 h-1.5 bg-[#E5E4DC] rounded-full overflow-hidden">
-              <div
-                className="h-full bg-[#1D4ED8] transition-all duration-150"
-                style={{ width: `${Math.max(12, loadProgress)}%` }}
+          <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden bg-[#F5F4EF]">
+            {posterThumbUrl && (
+              <img
+                src={posterThumbUrl}
+                alt={title}
+                className="absolute inset-0 w-full h-full object-cover opacity-30"
               />
+            )}
+            <div className="relative z-10 flex flex-col items-center px-6 py-5 bg-[#FAFAF8]/92 border border-[#D6D4CC] rounded-[2px] text-center max-w-xs w-full mx-4">
+              <p className="font-mono-tabular text-xs text-[#141413] mb-2">
+                {t.loading} {loadProgress > 0 ? `${loadProgress}%` : ''}
+              </p>
+              <div className="w-full h-1.5 bg-[#E5E4DC] rounded-none overflow-hidden">
+                <div
+                  className="h-full bg-[#9E3B2E] transition-all duration-150"
+                  style={{ width: `${Math.max(12, loadProgress)}%` }}
+                />
+              </div>
+              {onSwitchToPhotos && (
+                <button
+                  type="button"
+                  onClick={onSwitchToPhotos}
+                  className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-mono-tabular uppercase tracking-wider text-[#141413] bg-white border border-[#D6D4CC] hover:border-[#9E3B2E] hover:text-[#9E3B2E] rounded-[2px] transition-colors"
+                >
+                  <Camera className="w-3 h-3" aria-hidden="true" />
+                  {t.viewPhotosFallback}
+                </button>
+              )}
             </div>
           </div>
         )}
 
         {loadError && !isLoading && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#F5F4EF] px-6 text-center">
-            <p className="font-editorial text-lg font-semibold text-[#141413] mb-1">
-              {t.unavailable}
-            </p>
-            <p className="text-xs text-[#6B6A65] max-w-sm">{t.loadError}</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden bg-[#F5F4EF] px-6 text-center">
+            {posterThumbUrl && (
+              <img
+                src={posterThumbUrl}
+                alt={title}
+                className="absolute inset-0 w-full h-full object-cover opacity-25"
+              />
+            )}
+            <div className="relative z-10 px-6 py-5 bg-[#FAFAF8]/95 border border-[#D6D4CC] rounded-[2px] max-w-sm">
+              <p className="font-editorial text-lg font-semibold text-[#141413] mb-1">
+                {t.unavailable}
+              </p>
+              <p className="text-xs text-[#6B6A65] mb-3">{t.loadError}</p>
+              {onSwitchToPhotos && (
+                <button
+                  type="button"
+                  onClick={onSwitchToPhotos}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-[#9E3B2E] hover:bg-[#7F2D22] rounded-[2px] transition-colors"
+                >
+                  <Camera className="w-3.5 h-3.5" aria-hidden="true" />
+                  {t.viewPhotosFallback}
+                </button>
+              )}
+            </div>
           </div>
         )}
 
         {!isLoading && !loadError && (
-          <div className="pointer-events-none absolute left-3.5 bottom-3 px-2.5 py-1 bg-white/95 border border-[#E5E5E0] rounded text-[11px] font-mono-tabular text-[#575652]">
+          <div className="pointer-events-none absolute left-3.5 bottom-3 px-2.5 py-1 bg-white/95 border border-[#D6D4CC] rounded-[2px] text-[11px] font-mono-tabular text-[#575652]">
             {t.controlsHint}
           </div>
         )}

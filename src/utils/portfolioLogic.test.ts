@@ -251,9 +251,15 @@ test('localizes portfolio data to Simplified Chinese while preserving canonical 
   assert.equal(zhData.projects[0].title, '渗透式运动走廊');
   assert.equal(zhData.projects[0].category, 'NUS Year 3');
   assert.ok(filterProjects(zhData.projects, 'NUS Year 3', '').length === 2);
-  assert.equal(zhData.models[0].title, '渗透式运动走廊 — 生长型社区中心');
+  assert.equal(zhData.models[0].title, '渗透式运动走廊');
   assert.equal(zhData.models[3].variants?.length, 6);
   assert.equal(zhData.models[3].variants?.[0].label, 'RC 终版空间框架');
   assert.equal(UI_TEXT.en.switchToLanguageLabel, '中文');
   assert.equal(UI_TEXT.zh.switchToLanguageLabel, 'EN');
+
+  const modelingSkills = INITIAL_PORTFOLIO_DATA.skillGroups.find((g) => g.id === 'sg-modeling');
+  const bimSkills = INITIAL_PORTFOLIO_DATA.skillGroups.find((g) => g.id === 'sg-autodesk');
+  assert.ok(modelingSkills?.items.includes('CFD'));
+  assert.equal(bimSkills?.items.includes('CFD'), false);
+  assert.equal(INITIAL_PORTFOLIO_DATA.projects.filter((p) => p.featured).length, 4);
 });

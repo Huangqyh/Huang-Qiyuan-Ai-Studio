@@ -150,20 +150,20 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                   type="button"
                   aria-selected={active}
                   onClick={() => setSelectedModelIndex(idx)}
-                  className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors ${
+                  className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-[2px] border transition-colors whitespace-nowrap ${
                     active
                       ? 'bg-[#141413] text-white border-[#141413]'
-                      : 'bg-white text-[#2C2C2A] border-[#E5E5E0] hover:border-[#BDBBB2]'
+                      : 'bg-white text-[#2C2C2A] border-[#D6D4CC] hover:border-[#9E3B2E]'
                   }`}
                 >
                   <span
                     className={`font-mono-tabular text-[11px] ${
-                      active ? 'text-[#93C5FD]' : 'text-[#6B6A65]'
+                      active ? 'text-[#E6A79C]' : 'text-[#6B6A65]'
                     }`}
                   >
                     {code}
                   </span>
-                  <span className="truncate max-w-[260px]">{model.title}</span>
+                  <span>{model.title}</span>
                   <span
                     className={`font-mono-tabular text-[11px] ${
                       active ? 'text-white/75' : 'text-[#8A8882]'
@@ -178,7 +178,7 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
         )}
 
         {!activeModel ? (
-          <div className="py-16 px-6 text-center bg-white border border-[#E5E5E0] rounded-xl">
+          <div className="py-16 px-6 text-center bg-white border border-[#D6D4CC] rounded-[2px]">
             <Box className="w-8 h-8 text-[#8A8882] mx-auto mb-3" aria-hidden="true" />
             <p className="font-editorial text-2xl text-[#141413] mb-1">{t.emptyTitle}</p>
             <p className="text-sm text-[#575652]">{t.emptyHint}</p>
@@ -191,16 +191,16 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                 <div
                   role="tablist"
                   aria-label={t.viewModeAria}
-                  className="inline-flex items-center gap-1 p-1 bg-[#EFECE6] border border-[#E2E0D8] rounded-lg"
+                  className="inline-flex items-center gap-1 p-1 bg-[#EFECE6] border border-[#D6D4CC] rounded-[2px]"
                 >
                   <button
                     role="tab"
                     type="button"
                     aria-selected={stageTab === '3d'}
                     onClick={() => setStageTab('3d')}
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-[1px] transition-colors ${
                       stageTab === '3d'
-                        ? 'bg-white text-[#141413] shadow-xs'
+                        ? 'bg-white text-[#141413] shadow-2xs'
                         : 'text-[#575652] hover:text-[#141413]'
                     }`}
                   >
@@ -212,9 +212,9 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                     type="button"
                     aria-selected={stageTab === 'photos'}
                     onClick={() => setStageTab('photos')}
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-[1px] transition-colors ${
                       stageTab === 'photos'
-                        ? 'bg-white text-[#141413] shadow-xs'
+                        ? 'bg-white text-[#141413] shadow-2xs'
                         : 'text-[#575652] hover:text-[#141413]'
                     }`}
                   >
@@ -227,7 +227,7 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                   <button
                     type="button"
                     onClick={() => setPhotoLightboxIndex(safeStagePhotoIndex)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#141413] bg-white border border-[#DFDED8] hover:border-[#1D4ED8] rounded-md transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#141413] bg-white border border-[#D6D4CC] hover:border-[#9E3B2E] hover:text-[#9E3B2E] rounded-[2px] transition-colors"
                   >
                     <ZoomIn className="w-3.5 h-3.5" aria-hidden="true" />
                     {t.expandPhoto}
@@ -236,13 +236,13 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
               </div>
 
               {variants.length > 0 && (
-                <div className="bg-white border border-[#E5E5E0] rounded-lg px-3 py-2.5 space-y-2 no-print">
+                <div className="bg-white border border-[#D6D4CC] rounded-[2px] px-3 py-2.5 space-y-2 no-print">
                   <div className="flex items-center justify-between gap-2 text-[11px]">
                     <span className="font-mono-tabular uppercase tracking-wider text-[#6B6A65]">
                       {t.structuralHeading(variants.length)}
                     </span>
                     {activeVariant && (
-                      <span className="font-mono-tabular text-[#1D4ED8] truncate">
+                      <span className="font-mono-tabular text-[#9E3B2E] truncate">
                         {activeVariant.systemType}
                       </span>
                     )}
@@ -264,10 +264,10 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                             setSelectedVariantIndex(vIdx);
                             setStageTab('3d');
                           }}
-                          className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-colors ${
+                          className={`px-2.5 py-1 text-xs font-medium rounded-[2px] border transition-colors ${
                             active
-                              ? 'bg-[#1D4ED8] text-white border-[#1D4ED8]'
-                              : 'bg-[#F7F6F2] text-[#2C2C2A] border-[#E2E0D8] hover:border-[#1D4ED8]/50'
+                              ? 'bg-[#9E3B2E] text-white border-[#9E3B2E]'
+                              : 'bg-[#F7F6F2] text-[#2C2C2A] border-[#D6D4CC] hover:border-[#9E3B2E]/60'
                           }`}
                         >
                           {String(vIdx + 1).padStart(2, '0')} · {variant.label}
@@ -283,11 +283,22 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                   {hasEnteredProximity ? (
                     <Suspense
                       fallback={
-                        <div className="flex flex-col items-center justify-center w-full min-h-[440px] sm:min-h-[520px] bg-[#F5F4EF] border border-[#E5E5E0] rounded-xl px-6 text-center">
-                          <Box className="w-7 h-7 text-[#8A8882] mb-2.5" aria-hidden="true" />
-                          <p className="font-mono-tabular text-xs text-[#6B6A65]">
-                            {t.initializing3d}
-                          </p>
+                        <div className="relative flex flex-col items-center justify-center w-full min-h-[440px] sm:min-h-[520px] bg-[#F5F4EF] border border-[#D6D4CC] rounded-[2px] overflow-hidden px-6 text-center">
+                          {activeModel.photos[0] && (
+                            <ArchitecturalImage
+                              src={activeModel.photos[0].imageUrl}
+                              alt={activeModel.title}
+                              variant="thumbnail"
+                              fit="cover"
+                              className="absolute inset-0 w-full h-full opacity-25"
+                            />
+                          )}
+                          <div className="relative z-10 px-5 py-4 bg-[#FAFAF8]/92 border border-[#D6D4CC] rounded-[2px]">
+                            <Box className="w-6 h-6 text-[#9E3B2E] mx-auto mb-2" aria-hidden="true" />
+                            <p className="font-mono-tabular text-xs text-[#141413]">
+                              {t.initializing3d}
+                            </p>
+                          </div>
                         </div>
                       }
                     >
@@ -300,30 +311,57 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                             : activeModel.title
                         }
                         locale={locale}
+                        posterImageUrl={activeModel.photos[0]?.imageUrl}
+                        onSwitchToPhotos={
+                          activeModel.photos.length > 0 ? () => setStageTab('photos') : undefined
+                        }
                         isVisible={isViewportVisible}
                       />
                     </Suspense>
                   ) : (
-                    <div className="flex flex-col items-center justify-center w-full min-h-[440px] sm:min-h-[520px] bg-[#F5F4EF] border border-[#E5E5E0] rounded-xl px-6 text-center">
-                      <Box className="w-7 h-7 text-[#8A8882] mb-2.5" aria-hidden="true" />
-                      <p className="font-mono-tabular text-xs text-[#6B6A65]">{t.scrollToLoad}</p>
+                    <div className="relative flex flex-col items-center justify-center w-full min-h-[440px] sm:min-h-[520px] bg-[#F5F4EF] border border-[#D6D4CC] rounded-[2px] overflow-hidden px-6 text-center">
+                      {activeModel.photos[0] && (
+                        <ArchitecturalImage
+                          src={activeModel.photos[0].imageUrl}
+                          alt={activeModel.title}
+                          variant="thumbnail"
+                          fit="cover"
+                          className="absolute inset-0 w-full h-full opacity-35"
+                        />
+                      )}
+                      <div className="relative z-10 px-5 py-4 bg-[#FAFAF8]/92 border border-[#D6D4CC] rounded-[2px]">
+                        <Box className="w-6 h-6 text-[#9E3B2E] mx-auto mb-2" aria-hidden="true" />
+                        <p className="font-mono-tabular text-xs text-[#141413] mb-2">
+                          {t.scrollToLoad}
+                        </p>
+                        {activeModel.photos.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setStageTab('photos')}
+                            className="inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-mono-tabular uppercase tracking-wider text-[#141413] bg-white border border-[#D6D4CC] hover:border-[#9E3B2E] hover:text-[#9E3B2E] rounded-[2px] transition-colors"
+                          >
+                            <Camera className="w-3 h-3" aria-hidden="true" />
+                            {t.viewPhotosFallback}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
               ) : !currentStagePhoto ? (
-                <div className="flex-1 min-h-[440px] sm:min-h-[520px] flex flex-col items-center justify-center text-center bg-white border border-[#E5E5E0] rounded-xl p-8">
+                <div className="flex-1 min-h-[440px] sm:min-h-[520px] flex flex-col items-center justify-center text-center bg-white border border-[#D6D4CC] rounded-[2px] p-8">
                   <Camera className="w-8 h-8 text-[#9C9A92] mb-2" aria-hidden="true" />
                   <p className="font-editorial text-xl text-[#141413] mb-1">{t.noPhotosTitle}</p>
                   <p className="text-xs text-[#6B6A65] max-w-sm">{t.noPhotosHint}</p>
                 </div>
               ) : (
-                <div className="flex-1 flex flex-col bg-white border border-[#E5E5E0] rounded-xl overflow-hidden">
+                <div className="flex-1 flex flex-col bg-white border border-[#D6D4CC] rounded-[2px] overflow-hidden">
                   <div className="relative h-[380px] sm:h-[440px] bg-[#F5F4EF] flex items-center justify-center p-3">
                     <button
                       type="button"
                       onClick={() => setPhotoLightboxIndex(safeStagePhotoIndex)}
                       aria-label={currentStagePhoto.caption}
-                      className="w-full h-full cursor-zoom-in focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D4ED8]"
+                      className="w-full h-full cursor-zoom-in focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E3B2E]"
                     >
                       <ArchitecturalImage
                         src={currentStagePhoto.imageUrl}
@@ -374,7 +412,7 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-5 gap-2 p-3 bg-[#FAFAF8] border-t border-[#E5E5E0]">
+                  <div className="grid grid-cols-5 gap-2 p-3 bg-[#FAFAF8] border-t border-[#D6D4CC]">
                     {activeModel.photos.map((photo, pIdx) => {
                       const active = pIdx === safeStagePhotoIndex;
                       return (
@@ -384,10 +422,10 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                           onClick={() => setStagePhotoIndex(pIdx)}
                           aria-label={`Select photo ${pIdx + 1}: ${photo.caption}`}
                           aria-current={active ? 'true' : undefined}
-                          className={`aspect-[4/3] rounded-md overflow-hidden border transition-all ${
+                          className={`aspect-[4/3] rounded-[2px] overflow-hidden border transition-all ${
                             active
-                              ? 'border-[#1D4ED8] ring-2 ring-[#1D4ED8]/25'
-                              : 'border-[#E5E5E0] opacity-75 hover:opacity-100'
+                              ? 'border-[#9E3B2E] ring-2 ring-[#9E3B2E]/25'
+                              : 'border-[#D6D4CC] opacity-75 hover:opacity-100'
                           }`}
                         >
                           <ArchitecturalImage
@@ -407,9 +445,9 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
 
             {/* Right Column: Model Dossier & Companion Photos */}
             <div className="lg:col-span-5 flex flex-col gap-5">
-              <div className="bg-white border border-[#E5E5E0] rounded-xl p-5 sm:p-6 space-y-4">
+              <div className="bg-white border border-[#D6D4CC] rounded-[2px] p-5 sm:p-6 space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F3F2EE] border border-[#E5E4DC] font-mono-tabular text-[11px] font-medium text-[#141413]">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] bg-[#F3F2EE] border border-[#D6D4CC] font-mono-tabular text-[11px] font-medium text-[#141413]">
                     MD. {String(safeModelIndex + 1).padStart(2, '0')} · {activeModel.studioOrContext}
                   </span>
                   <span className="font-mono-tabular text-xs font-medium text-[#6B6A65]">
@@ -421,10 +459,10 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                   <h3 className="font-editorial text-2xl sm:text-[26px] font-semibold text-[#141413] leading-snug">
                     {activeModel.title}
                   </h3>
-                  <p className="text-xs font-medium text-[#1D4ED8]">{activeModel.subtitle}</p>
+                  <p className="text-xs font-medium text-[#9E3B2E]">{activeModel.subtitle}</p>
                 </div>
 
-                <dl className="grid grid-cols-3 gap-3 py-3 border-y border-[#F0EFEA] text-xs">
+                <dl className="grid grid-cols-3 gap-3 py-3 border-y border-[#ECEAE2] text-xs">
                   <div className="col-span-2 min-w-0">
                     <dt className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#8A8882] mb-0.5">
                       {t.yearOfStudyLabel}
@@ -452,8 +490,8 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                 <p className="text-sm text-[#575652] leading-relaxed">{activeModel.description}</p>
 
                 {activeVariant && (
-                  <div className="p-3.5 bg-[#F7F6F2] border border-[#E5E4DC] rounded-lg space-y-1">
-                    <p className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#1D4ED8]">
+                  <div className="p-3.5 bg-[#F7F6F2] border border-[#D6D4CC] rounded-[2px] space-y-1">
+                    <p className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#9E3B2E]">
                       {t.activeVariantPrefix} · {activeVariant.systemType}
                     </p>
                     <p className="text-sm font-semibold text-[#141413]">{activeVariant.label}</p>
@@ -467,7 +505,7 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                   {activeModel.software.map((tool) => (
                     <span
                       key={tool}
-                      className="px-2 py-0.5 text-[11px] font-medium bg-[#F3F2EE] text-[#2C2C2A] rounded"
+                      className="px-2 py-0.5 text-[11px] font-mono-tabular font-medium bg-[#F3F2EE] border border-[#E2E0D8] text-[#2C2C2A] rounded-[2px]"
                     >
                       {tool}
                     </span>
@@ -476,10 +514,10 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
               </div>
 
               {/* Companion Photos Panel */}
-              <div className="bg-white border border-[#E5E5E0] rounded-xl p-5 sm:p-6 flex-1 flex flex-col">
+              <div className="bg-white border border-[#D6D4CC] rounded-[2px] p-5 sm:p-6 flex-1 flex flex-col">
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <h4 className="text-xs font-semibold uppercase tracking-wider text-[#141413] flex items-center gap-1.5">
-                    <Camera className="w-3.5 h-3.5 text-[#1D4ED8]" aria-hidden="true" />
+                    <Camera className="w-3.5 h-3.5 text-[#9E3B2E]" aria-hidden="true" />
                     {t.companionHeading}
                   </h4>
                   <span className="font-mono-tabular text-xs text-[#6B6A65]">
@@ -489,7 +527,7 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                 </div>
 
                 {activeModel.photos.length === 0 ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-center border border-dashed border-[#D6D4CC] bg-[#FAF9F6] rounded-lg p-6 min-h-[180px]">
+                  <div className="flex-1 flex flex-col items-center justify-center text-center border border-dashed border-[#D6D4CC] bg-[#FAF9F6] rounded-[2px] p-6 min-h-[180px]">
                     <Camera className="w-6 h-6 text-[#9C9A92] mb-2" aria-hidden="true" />
                     <p className="text-xs font-medium text-[#2C2C2A] mb-1">{t.noCompanionTitle}</p>
                     <p className="text-xs text-[#6B6A65] max-w-xs leading-relaxed">
@@ -506,7 +544,7 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                           setStagePhotoIndex(pIdx);
                           setPhotoLightboxIndex(pIdx);
                         }}
-                        className="group text-left bg-[#FAF9F6] border border-[#E5E5E0] rounded-lg overflow-hidden hover:border-[#1D4ED8] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D4ED8]"
+                        className="group text-left bg-[#FAF9F6] border border-[#D6D4CC] rounded-[2px] overflow-hidden hover:border-[#9E3B2E] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E3B2E]"
                       >
                         <div className="aspect-[4/3] w-full overflow-hidden bg-white">
                           <ArchitecturalImage
@@ -547,8 +585,8 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
             if (e.target === e.currentTarget) setPhotoLightboxIndex(null);
           }}
         >
-          <div className="w-full max-w-[900px] max-h-[90vh] bg-white border border-[#E5E5E0] rounded-2xl overflow-hidden flex flex-col shadow-2xl">
-            <div className="px-5 py-3.5 border-b border-[#E5E5E0] flex items-center justify-between gap-4">
+          <div className="w-full max-w-[900px] max-h-[90vh] bg-white border border-[#D6D4CC] rounded-[2px] overflow-hidden flex flex-col shadow-2xl">
+            <div className="px-5 py-3.5 border-b border-[#D6D4CC] flex items-center justify-between gap-4">
               <div className="min-w-0">
                 <p className="font-mono-tabular text-xs text-[#6B6A65] truncate">
                   {activeModel.title}
@@ -569,7 +607,7 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                         )
                       }
                       aria-label={t.prevPhotoAria}
-                      className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#141413] hover:bg-[#F3F2EE]"
+                      className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE]"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
@@ -579,7 +617,7 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                         setPhotoLightboxIndex((photoLightboxIndex + 1) % activeModel.photos.length)
                       }
                       aria-label={t.nextPhotoAria}
-                      className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#141413] hover:bg-[#F3F2EE]"
+                      className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE]"
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
@@ -589,7 +627,7 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                   type="button"
                   onClick={() => setPhotoLightboxIndex(null)}
                   aria-label={t.closePhotoViewerAria}
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#575652] hover:text-[#141413] hover:bg-[#F3F2EE]"
+                  className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#575652] hover:text-[#141413] hover:bg-[#F3F2EE]"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -601,11 +639,11 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                 src={activePhoto.imageUrl}
                 alt={activePhoto.caption}
                 fit="contain"
-                className="w-full h-[60vh] bg-white rounded-lg p-2 border border-[#E5E5E0]"
+                className="w-full h-[60vh] bg-white rounded-[2px] p-2 border border-[#D6D4CC]"
               />
             </div>
 
-            <div className="px-5 py-3 border-t border-[#E5E5E0] flex items-center justify-between text-xs text-[#6B6A65]">
+            <div className="px-5 py-3 border-t border-[#D6D4CC] flex items-center justify-between text-xs text-[#6B6A65]">
               <span>{activePhoto.caption}</span>
               <span className="font-mono-tabular">
                 {photoLightboxIndex + 1} / {activeModel.photos.length}

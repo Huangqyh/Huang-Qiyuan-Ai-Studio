@@ -57,6 +57,7 @@ export const UI_TEXT = {
       copyLink: 'Copy Portfolio Link',
       linkCopied: 'Link Copied',
       canvasGroupAria: 'Drafting canvas surface',
+      surfaceLabel: 'Surface:',
       draftingPaper: 'Drafting Paper',
       draftingGrid: 'Drafting Grid',
       handDrawn: 'Hand Drawn',
@@ -91,6 +92,8 @@ export const UI_TEXT = {
       plateSingular: 'Plate',
       platePlural: 'Plates',
       viewPlates: 'View Plates',
+      showArchive: (remaining: number) => `Show Full Archive (+${remaining} More Projects)`,
+      showFeaturedOnly: 'Show Featured Projects Only',
       openAria: (title: string) => `Open ${title} case study and drawing plates`,
     },
     lightbox: {
@@ -111,7 +114,7 @@ export const UI_TEXT = {
       browseHint: 'Use ← / → keys to browse plates',
     },
     cv: {
-      eyebrow: '02. Curriculum Vitae',
+      eyebrow: '04. Curriculum Vitae',
       heading: 'Practice, Education & Technical Proficiencies',
       printCv: 'Print CV',
       experienceHeading: 'Architectural Experience',
@@ -130,7 +133,7 @@ export const UI_TEXT = {
       communityHeading: 'Community Service & Leadership',
     },
     sketches: {
-      eyebrow: '03. Observational Studies',
+      eyebrow: '02. Observational Studies',
       heading: 'Hand-Drawn Sketches & Ink Studies',
       subtitle:
         'Freehand pen and graphite architectural observations spanning vernacular thresholds, classical vaults, European silhouettes, and Singapore waterfront landmarks.',
@@ -143,7 +146,7 @@ export const UI_TEXT = {
       closeAria: 'Close sketch viewer',
     },
     models: {
-      eyebrow: '04. Spatial Archive',
+      eyebrow: '03. Spatial Archive',
       heading: '3D Models & Physical Studies',
       subtitle:
         'Interactive spatial models exported from architectural studio workflows alongside companion physical model and site photographs.',
@@ -160,6 +163,7 @@ export const UI_TEXT = {
       selectVariantAria: 'Select structural study model',
       initializing3d: 'Initializing 3D Viewport...',
       scrollToLoad: 'Interactive 3D model loads automatically when in view',
+      viewPhotosFallback: 'View Physical Photos',
       noPhotosTitle: 'No Physical Model Photos Yet',
       noPhotosHint:
         'Upload physical model photographs in Owner Studio → 3D Models to showcase them here alongside the 3D viewer.',
@@ -188,6 +192,7 @@ export const UI_TEXT = {
       enterFullscreen: 'Enter fullscreen 3D viewer',
       exitFullscreen: 'Exit fullscreen 3D viewer',
       loading: 'Loading 3D Geometry...',
+      viewPhotosFallback: 'View Physical Photos',
       unavailable: '3D Preview Unavailable',
       loadError: 'Could not load 3D model file. Check that the asset path is accessible.',
       controlsHint: 'Drag to orbit · Scroll to zoom · Right-drag to pan',
@@ -230,6 +235,7 @@ export const UI_TEXT = {
       copyLink: '复制作品集链接',
       linkCopied: '链接已复制',
       canvasGroupAria: '图纸背景切换',
+      surfaceLabel: '底纸：',
       draftingPaper: '绘图纸底',
       draftingGrid: '建筑网格',
       handDrawn: '手绘原稿',
@@ -264,6 +270,8 @@ export const UI_TEXT = {
       plateSingular: '张图纸',
       platePlural: '张图纸',
       viewPlates: '查看图纸',
+      showArchive: (remaining: number) => `展开完整作品档案（另含 ${remaining} 项）`,
+      showFeaturedOnly: '仅显示精选作品',
       openAria: (title: string) => `查看 ${title} 项目详情与图纸`,
     },
     lightbox: {
@@ -284,7 +292,7 @@ export const UI_TEXT = {
       browseHint: '可使用键盘 ← / → 方向键切换图纸',
     },
     cv: {
-      eyebrow: '02. 个人简历',
+      eyebrow: '04. 个人简历',
       heading: '实践经历、教育背景与专业技能',
       printCv: '打印简历',
       experienceHeading: '建筑实践经历',
@@ -303,7 +311,7 @@ export const UI_TEXT = {
       communityHeading: '社区服务与领导力',
     },
     sketches: {
-      eyebrow: '03. 观察性手绘研究',
+      eyebrow: '02. 观察性手绘研究',
       heading: '建筑手绘与钢笔速写',
       subtitle:
         '以钢笔与铅笔记录建筑空间观察，涵盖传统民居入口、古典拱券、欧洲历史立面及新加坡滨水地标。',
@@ -316,7 +324,7 @@ export const UI_TEXT = {
       closeAria: '关闭手绘浏览窗',
     },
     models: {
-      eyebrow: '04. 空间数字档案',
+      eyebrow: '03. 空间数字档案',
       heading: '三维模型与实体模型研究',
       subtitle:
         '直接从建筑设计课数字工作流导出的交互式三维模型，并附配套实体模型制作及展览现场照片。',
@@ -333,6 +341,7 @@ export const UI_TEXT = {
       selectVariantAria: '选择结构模型变体',
       initializing3d: '正在初始化三维视口...',
       scrollToLoad: '滚动至此区域将自动加载交互式三维模型',
+      viewPhotosFallback: '查看实体照片',
       noPhotosTitle: '暂无实体模型照片',
       noPhotosHint: '可在“后台管理 → 3D 模型”上传实体模型摄影图片与三维视口联动展示。',
       prevPhotoAria: '上一张实体模型照片',
@@ -360,6 +369,7 @@ export const UI_TEXT = {
       enterFullscreen: '全屏查看三维模型',
       exitFullscreen: '退出全屏',
       loading: '正在加载三维几何模型...',
+      viewPhotosFallback: '查看实体照片',
       unavailable: '三维预览暂不可用',
       loadError: '无法加载三维模型文件，请检查资源路径是否可访问。',
       controlsHint: '左键拖拽旋转 · 滚轮缩放 · 右键拖拽平移',
@@ -501,13 +511,13 @@ const ZH_PROJECTS: Record<
     },
   },
   'open-celmer': {
-    title: 'Open-Celmer × Oppenheimer — 双面叙事',
-    subtitle: '电影空间转译与高密度模块化结构聚合综合体',
+    title: 'Open-Celmer × Oppenheimer',
+    subtitle: '电影空间转译与模块化木构体量聚合',
     studioOrContext: 'NUS Studio Shin Yokoo (Unit 2) · 大二上学期',
     location: '新加坡丹戎巴葛与华利街',
     scale: '1:50 & 1:100',
     summary:
-      '两阶段联动的建筑设计课题：第一阶段从电影《奥本海默》及场地“自然-城市”二元对立中提取情绪空间单元；第二阶段围绕流畅自然中庭进行高密度结构聚合。',
+      '位于丹戎巴葛都市地块的模块化椴木居住聚合体：围绕蜿蜒混凝土核心筒与醒目橙色悬挑楼梯矩阵组织居住单元。',
     description:
       '本作品在 NUS Studio Shin Yokoo（Unit 2）连续两个研究阶段中完成，选址新加坡丹戎巴葛路、客纳街与华利街交界的高密度城市填补地块。第一阶段（Oppenheimer — 双面叙事）将影片中的光影撕裂与“悲伤五个阶段”转译为锐利切口、不可达开口与受控采光井；第二阶段（Open-Celmer）将模块化 A/B/C 居住单元围绕蜿蜒有机的中央虚空间进行排列组合，由钢筋混凝土曲线核心筒与钢制剪力梁共同承重，在紧凑都市语境中平衡绿化、穿堂风与醒目的室外橙红连廊楼梯。',
     highlights: [
@@ -640,10 +650,9 @@ const ZH_EXPERIENCES: Record<string, Partial<WorkExperience>> = {
     location: '中国 · 上海',
     period: '2025年6月 – 2025年8月',
     highlights: [
-      '在这家享誉国际的德国建筑师事务所上海办公室完成为期两个月的海外驻场实习。',
-      '担任中英文跨文化设计沟通桥梁，保障中外团队之间高效精准的设计协作。',
-      '参与概念验证方案推演、甲方汇报准备工作及跨专业设计协调会议。',
-      '在紧凑项目节点下高质量完成 Rhino 三维建模、Illustrator 分析图谱与 Photoshop 表现效果图。',
+      '在 GMP 上海办公室完成为期两个月的建筑设计实习，参与国际竞赛与概念阶段方案推进。',
+      '构建多轮 Rhino 三维体量推演模型，并在 Illustrator 与 Photoshop 中完成分析图谱及高级汇报表现展板。',
+      '担任中德/中英双语技术沟通桥梁，精准传达方案评审意见以保障团队竞赛节点高效衔接。',
     ],
   },
   'exp-dp': {
@@ -652,10 +661,9 @@ const ZH_EXPERIENCES: Record<string, Partial<WorkExperience>> = {
     location: '新加坡',
     period: '2024年6月 – 2024年8月',
     highlights: [
-      '为在建商业及公共建筑项目贡献三维建模、空间分析图与渲染表现成果。',
-      '使用 AutoCAD、Revit 与 SketchUp 辅助完成结构平面图与总体布局的技术制图与深化。',
-      '参与甲方沟通会议，并协助准备向新加坡市区重建局 (URA) 与陆路交通管理局 (LTA) 提交的法定报批文件。',
-      '为资深建筑师梳理清晰的项目汇报演示文稿并协同管理设计图档。',
+      '使用 Rhino、SketchUp、Revit 与 AutoCAD 协助推进商业及公共项目体量模型更新与平面施工图修订。',
+      '编制面向新加坡市区重建局 (URA) 与陆路交通管理局 (LTA) 的法定报批图纸与指标校核资料。',
+      '为资深建筑师梳理多专业审图修改意见并整合成清晰的甲方汇报演示文稿。',
     ],
   },
   'exp-uci': {
@@ -664,9 +672,8 @@ const ZH_EXPERIENCES: Record<string, Partial<WorkExperience>> = {
     location: '新加坡',
     period: '2021年1月 – 2021年4月',
     highlights: [
-      '早期深入建筑设计工作室一线，系统接触专业工程图档标准与设计工作流程。',
-      '通过自学迅速掌握 Revit 与 AutoCAD，独立交付准确的三维建筑模型与二维工程图纸。',
-      '建立了扎实的建筑多专业图纸配合与设计改图工作基础。',
+      '入职后迅速自学掌握 Revit 与 AutoCAD，独立交付空间三维模型及二维施工图纸。',
+      '在资深建筑师指导下维护图纸版本修订记录并严格遵循企业级 CAD 图层管理规范。',
     ],
   },
 };
@@ -810,8 +817,8 @@ const ZH_MODELS: Record<
   }
 > = {
   'y3s2-permeable-sports-corridor': {
-    title: '渗透式运动走廊 — 生长型社区中心',
-    subtitle: '模块化管状肋脊、铰接拱架与适应性社区体育基础设施',
+    title: '渗透式运动走廊',
+    subtitle: '模块化管状肋脊与社区体育基础设施',
     studioOrContext: 'NUS 大三 · 下学期 (Studio CLR)',
     scale: '1:200 实体与数字模型',
     description:
@@ -825,7 +832,7 @@ const ZH_MODELS: Record<
     },
   },
   'y3s1-model': {
-    title: "3R's V.2 — 重思遗产保护",
+    title: "3R's V.2 — 店屋保护系统",
     subtitle: '新加坡传统店屋的适应性“构件工具箱”保护体系',
     studioOrContext: 'NUS 大三 · 上学期 (Studio CM)',
     scale: '1:50 & 1:100 数字建筑模型',
@@ -840,7 +847,7 @@ const ZH_MODELS: Record<
     },
   },
   'y2s2-bend-boo': {
-    title: 'Bend-Boo — 弯曲竹构气候表皮改造',
+    title: 'Bend-Boo 竹构改造',
     subtitle: 'NUS COM 2 教学楼被动式文丘里通风与曲面竹构立面设计',
     studioOrContext: 'NUS 大二 · 下学期（气候生态与建筑）',
     scale: '1:50 实体与数字模型',
@@ -855,7 +862,7 @@ const ZH_MODELS: Record<
     },
   },
   'ar2328-structural-systems': {
-    title: 'AR2328 — 建筑构造与结构体系',
+    title: 'AR2328 结构体系',
     subtitle: '钢筋混凝土框架、大跨度钢结构与曲面形态受力学研究',
     studioOrContext: 'NUS 大二 · AR2328 结构体系课程',
     scale: '结构构件与柱网空间模型',
@@ -895,7 +902,7 @@ const ZH_MODELS: Record<
     },
   },
   'y2s1-open-celmer': {
-    title: 'Open-Celmer × Oppenheimer — 居住综合体',
+    title: 'Open-Celmer × Oppenheimer',
     subtitle: '模块化木构居住盒体、雕塑感混凝土核心筒与橙色交通矩阵',
     studioOrContext: 'NUS 大二 · 上学期 (Studio Shin Yokoo)',
     scale: '1:50 & 1:100 实体与数字模型',

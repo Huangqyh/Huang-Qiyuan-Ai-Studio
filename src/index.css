@@ -6,6 +6,15 @@
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
+:root {
+  --accent-brick: #9E3B2E;
+  --accent-brick-hover: #7F2D22;
+  --accent-brick-soft: #F6ECEA;
+  --accent-sage: #5A6E58;
+  --accent-sage-soft: #EEF2EC;
+  --rule-hairline: #D6D4CC;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -50,8 +59,8 @@
 .surface-grid {
   background-color: #FAFAF8;
   background-image:
-    linear-gradient(to right, rgba(29, 78, 216, 0.065) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(29, 78, 216, 0.065) 1px, transparent 1px),
+    linear-gradient(to right, rgba(158, 59, 46, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(158, 59, 46, 0.06) 1px, transparent 1px),
     linear-gradient(to right, rgba(20, 20, 19, 0.04) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(20, 20, 19, 0.04) 1px, transparent 1px);
   background-size: 140px 140px, 140px 140px, 28px 28px, 28px 28px;

@@ -167,7 +167,7 @@ export function OwnerStudioPage({
                 type="button"
                 onClick={handleGoogleSignIn}
                 disabled={signingIn}
-                className="w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-white bg-[#141413] hover:bg-[#1D4ED8] disabled:opacity-60 rounded-md transition-colors"
+                className="w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-white bg-[#141413] hover:bg-[#9E3B2E] disabled:opacity-60 rounded-[2px] transition-colors"
               >
                 {signingIn ? 'Opening Google Sign-In...' : 'Sign in with Google'}
               </button>
@@ -210,7 +210,7 @@ export function OwnerStudioPage({
             <button
               type="button"
               onClick={handleSignOut}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#141413] hover:bg-[#1D4ED8] rounded-md transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#141413] hover:bg-[#9E3B2E] rounded-[2px] transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" aria-hidden="true" />
               Switch Account
@@ -249,7 +249,7 @@ export function OwnerStudioPage({
 
           <div className="flex items-center gap-2.5 shrink-0">
             <span className="hidden md:inline-flex items-center gap-1.5 text-xs font-mono-tabular text-[#575652] mr-1">
-              <Cloud className="w-3.5 h-3.5 text-[#1D4ED8]" aria-hidden="true" />
+              <Cloud className="w-3.5 h-3.5 text-[#9E3B2E]" aria-hidden="true" />
               {isSaving ? 'Saving to Cloud...' : 'Cloud Synced'}
             </span>
 
@@ -318,7 +318,7 @@ export function OwnerStudioPage({
             <button
               type="button"
               onClick={onCopyPublicLink}
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#1D4ED8] hover:bg-[#1E40AF] rounded-md transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#9E3B2E] hover:bg-[#7F2D22] rounded-[2px] transition-colors whitespace-nowrap shrink-0"
             >
               {copiedLink ? (
                 <>

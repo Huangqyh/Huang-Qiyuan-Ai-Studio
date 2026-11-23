@@ -56,11 +56,11 @@ export function ProjectLightbox({ project, locale, onClose }: ProjectLightboxPro
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative w-full max-w-[1320px] max-h-[92vh] bg-[#FAFAF8] border border-[#E5E5E0] rounded-2xl overflow-hidden flex flex-col lg:flex-row shadow-2xl">
+      <div className="relative w-full max-w-[1320px] max-h-[92vh] bg-[#FAFAF8] border border-[#D6D4CC] rounded-[2px] overflow-hidden flex flex-col lg:flex-row shadow-2xl">
         {/* Left/Main High-Res Drawing Plate Viewport */}
         <div className="lg:flex-1 min-w-0 flex flex-col bg-[#F1F0EB] min-h-[320px] lg:min-h-[680px] max-h-[55vh] lg:max-h-[92vh]">
           {/* Plate Toolbar */}
-          <div className="flex items-center justify-between gap-4 px-5 py-3 bg-white border-b border-[#E5E5E0]">
+          <div className="flex items-center justify-between gap-4 px-5 py-3 bg-white border-b border-[#D6D4CC]">
             <div className="flex items-center gap-2 text-xs text-[#575652] min-w-0">
               <span className="font-mono-tabular font-medium text-[#141413] shrink-0">
                 {activePlate ? activePlate.plateNumber : t.noPlate}
@@ -79,7 +79,7 @@ export function ProjectLightbox({ project, locale, onClose }: ProjectLightboxPro
                   type="button"
                   onClick={cycleZoom}
                   aria-label={zoom === 2 ? t.resetZoomAria : t.zoomInAria}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-[#141413] bg-[#F3F2EE] hover:bg-[#E7E5DE] rounded-md transition-colors whitespace-nowrap"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-[#141413] bg-[#F3F2EE] hover:bg-[#E7E5DE] rounded-[2px] transition-colors whitespace-nowrap"
                 >
                   {zoom > 1 ? (
                     <ZoomOut className="w-3.5 h-3.5" aria-hidden="true" />
@@ -101,7 +101,7 @@ export function ProjectLightbox({ project, locale, onClose }: ProjectLightboxPro
                       setZoom(1);
                     }}
                     aria-label={t.prevPlateAria}
-                    className="inline-flex items-center justify-center w-8 h-8 rounded-md text-[#141413] hover:bg-[#EFECE6] transition-colors"
+                    className="inline-flex items-center justify-center w-8 h-8 rounded-[2px] text-[#141413] hover:bg-[#EFECE6] transition-colors"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
@@ -112,7 +112,7 @@ export function ProjectLightbox({ project, locale, onClose }: ProjectLightboxPro
                       setZoom(1);
                     }}
                     aria-label={t.nextPlateAria}
-                    className="inline-flex items-center justify-center w-8 h-8 rounded-md text-[#141413] hover:bg-[#EFECE6] transition-colors"
+                    className="inline-flex items-center justify-center w-8 h-8 rounded-[2px] text-[#141413] hover:bg-[#EFECE6] transition-colors"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
@@ -136,7 +136,7 @@ export function ProjectLightbox({ project, locale, onClose }: ProjectLightboxPro
                 title={project.title}
                 plateNumber={activePlate?.plateNumber}
                 fit="contain"
-                className={`w-full bg-white border border-[#E5E5E0] rounded-lg p-2.5 ${
+                className={`w-full bg-white border border-[#D6D4CC] rounded-[2px] p-2.5 ${
                   zoom === 1 ? 'h-[42vh] lg:h-[66vh]' : 'min-h-[68vh]'
                 }`}
               />
@@ -145,7 +145,7 @@ export function ProjectLightbox({ project, locale, onClose }: ProjectLightboxPro
 
           {/* Multi-Plate Thumbnail Switcher */}
           {project.plates.length > 1 && (
-            <div className="px-5 py-3 bg-white border-t border-[#E5E5E0] flex items-center gap-2.5 overflow-x-auto">
+            <div className="px-5 py-3 bg-white border-t border-[#D6D4CC] flex items-center gap-2.5 overflow-x-auto">
               {project.plates.map((plate, idx) => {
                 const isSelected = idx === plateIndex;
                 return (
@@ -158,10 +158,10 @@ export function ProjectLightbox({ project, locale, onClose }: ProjectLightboxPro
                     }}
                     aria-label={t.thumbAria(plate.plateNumber, plate.caption)}
                     aria-current={isSelected ? 'true' : undefined}
-                    className={`relative shrink-0 w-16 h-12 rounded-md overflow-hidden border transition-all ${
+                    className={`relative shrink-0 w-16 h-12 rounded-[2px] overflow-hidden border transition-all ${
                       isSelected
-                        ? 'border-[#1D4ED8] ring-2 ring-[#1D4ED8]/25'
-                        : 'border-[#E5E5E0] opacity-70 hover:opacity-100'
+                        ? 'border-[#9E3B2E] ring-2 ring-[#9E3B2E]/25'
+                        : 'border-[#D6D4CC] opacity-70 hover:opacity-100'
                     }`}
                   >
                     <ArchitecturalImage
@@ -179,7 +179,7 @@ export function ProjectLightbox({ project, locale, onClose }: ProjectLightboxPro
         </div>
 
         {/* Right Architectural Case Study Specifications Sidebar */}
-        <aside className="lg:w-[390px] xl:w-[420px] shrink-0 bg-[#FAFAF8] border-t lg:border-t-0 lg:border-l border-[#E5E5E0] flex flex-col max-h-[40vh] lg:max-h-[92vh]">
+        <aside className="lg:w-[390px] xl:w-[420px] shrink-0 bg-[#FAFAF8] border-t lg:border-t-0 lg:border-l border-[#D6D4CC] flex flex-col max-h-[40vh] lg:max-h-[92vh]">
           <div className="flex-1 overflow-y-auto p-6 sm:p-7">
             <div className="flex items-start justify-between gap-4 mb-5">
               <div>

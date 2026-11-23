@@ -517,6 +517,10 @@ function PortfolioApp() {
             onSelectProject={setSelectedProject}
           />
 
+          <SketchesGallery sketches={localizedData.sketches} locale={locale} />
+
+          <ModelsShowcaseSection models={localizedData.models} locale={locale} />
+
           <CurriculumVitaeSection
             experiences={localizedData.experiences}
             education={localizedData.education}
@@ -529,10 +533,6 @@ function PortfolioApp() {
             onClearSkill={() => setActiveSkill(null)}
           />
 
-          <SketchesGallery sketches={localizedData.sketches} locale={locale} />
-
-          <ModelsShowcaseSection models={localizedData.models} locale={locale} />
-
           <ShareShowcaseSection
             profile={localizedData.profile}
             locale={locale}
@@ -542,30 +542,30 @@ function PortfolioApp() {
           />
         </main>
 
-        <footer className="border-t border-[#E5E5E0] bg-[#FAFAF8] py-8 no-print">
+        <footer className="border-t border-[#D6D4CC] bg-[#FAFAF8] py-8 no-print">
           <div className="max-w-[1240px] mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6B6A65]">
             <p>
               © {new Date().getFullYear()} {localizedData.profile.fullName} ·{' '}
               {t.footerBrandSuffix}
             </p>
             <div className="flex flex-wrap items-center gap-5">
-              <a href="#works" className="hover:text-[#141413] transition-colors">
+              <a href="#works" className="hover:text-[#9E3B2E] transition-colors">
                 {t.header.nav.works}
               </a>
-              <a href="#cv" className="hover:text-[#141413] transition-colors">
-                {t.header.footerCv}
-              </a>
-              <a href="#sketches" className="hover:text-[#141413] transition-colors">
+              <a href="#sketches" className="hover:text-[#9E3B2E] transition-colors">
                 {t.header.nav.sketches}
               </a>
-              <a href="#models" className="hover:text-[#141413] transition-colors">
+              <a href="#models" className="hover:text-[#9E3B2E] transition-colors">
                 {t.header.nav.models}
+              </a>
+              <a href="#cv" className="hover:text-[#9E3B2E] transition-colors">
+                {t.header.footerCv}
               </a>
               <a
                 href={localizedData.profile.linkedinUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="hover:text-[#141413] transition-colors"
+                className="hover:text-[#9E3B2E] transition-colors"
               >
                 LinkedIn
               </a>
@@ -575,7 +575,7 @@ function PortfolioApp() {
               <button
                 type="button"
                 onClick={navigateToOwnerStudio}
-                className="inline-flex items-center gap-1 text-[#8A8882] hover:text-[#141413] transition-colors"
+                className="inline-flex items-center gap-1 text-[#8A8882] hover:text-[#9E3B2E] transition-colors"
               >
                 <Lock className="w-3 h-3" aria-hidden="true" />
                 {t.header.ownerStudio}

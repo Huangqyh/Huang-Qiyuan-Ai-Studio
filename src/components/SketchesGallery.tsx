@@ -60,7 +60,7 @@ export function SketchesGallery({ sketches, locale }: SketchesGalleryProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {sketches.map((sketch, index) => (
             <StaggerRevealItem key={sketch.id} index={index} className="flex">
-              <figure className="group w-full flex flex-col bg-white border border-[#E5E5E0] rounded-xl overflow-hidden transition-all duration-220 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-[#BDBBB2] hover:shadow-[0_12px_26px_-18px_rgba(20,20,19,0.28)] print-break-avoid">
+              <figure className="group w-full flex flex-col bg-white border border-[#D6D4CC] rounded-[2px] overflow-hidden transition-all duration-220 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-[#9E3B2E]/60 hover:shadow-[0_12px_26px_-18px_rgba(20,20,19,0.28)] print-break-avoid">
                 <button
                   type="button"
                   onClick={() => {
@@ -68,9 +68,9 @@ export function SketchesGallery({ sketches, locale }: SketchesGalleryProps) {
                     setZoomed(false);
                   }}
                   aria-label={t.inspectAria(sketch.title)}
-                  className="flex flex-col flex-1 text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#1D4ED8]"
+                  className="flex flex-col flex-1 text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#9E3B2E]"
                 >
-                  <div className="relative aspect-[3/4] w-full overflow-hidden bg-white border-b border-[#F0EFEA] p-3">
+                  <div className="relative aspect-[3/4] w-full overflow-hidden bg-white border-b border-[#D6D4CC] p-3">
                     <ArchitecturalImage
                       src={sketch.imageUrl}
                       alt={`${sketch.title} — ${sketch.medium}`}
@@ -84,14 +84,16 @@ export function SketchesGallery({ sketches, locale }: SketchesGalleryProps) {
                     <DraftingCornerMarks tone="dark" />
                   </div>
                   <figcaption className="p-4">
-                    <div className="flex items-center justify-between gap-2 text-[11px] text-[#6B6A65] mb-1">
-                      <span className="font-mono-tabular">{sketch.plateNumber}</span>
-                      <span className="font-mono-tabular">{sketch.year}</span>
+                    <div className="flex items-center justify-between gap-2 font-mono-tabular text-[11px] uppercase tracking-wider text-[#6B6A65] mb-1">
+                      <span>{sketch.plateNumber}</span>
+                      <span>{sketch.year}</span>
                     </div>
-                    <p className="font-editorial text-lg font-semibold text-[#141413] leading-snug group-hover:text-[#1D4ED8] transition-colors">
+                    <p className="font-editorial text-lg font-semibold text-[#141413] leading-snug group-hover:text-[#9E3B2E] transition-colors">
                       {sketch.title}
                     </p>
-                    <p className="text-xs text-[#6B6A65] mt-0.5 truncate">{sketch.medium}</p>
+                    <p className="font-mono-tabular text-[11px] text-[#6B6A65] mt-1 truncate">
+                      {sketch.medium}
+                    </p>
                   </figcaption>
                 </button>
               </figure>
@@ -118,8 +120,8 @@ export function SketchesGallery({ sketches, locale }: SketchesGalleryProps) {
             }
           }}
         >
-          <div className="w-full max-w-[960px] max-h-[90vh] bg-white border border-[#E5E5E0] rounded-2xl overflow-hidden flex flex-col shadow-2xl">
-            <div className="px-5 py-3.5 border-b border-[#E5E5E0] flex items-center justify-between gap-4">
+          <div className="w-full max-w-[960px] max-h-[90vh] bg-white border border-[#D6D4CC] rounded-[2px] overflow-hidden flex flex-col shadow-2xl">
+            <div className="px-5 py-3.5 border-b border-[#D6D4CC] flex items-center justify-between gap-4">
               <div className="min-w-0">
                 <p className="font-mono-tabular text-xs text-[#6B6A65]">
                   {selectedSketch.plateNumber} · {selectedSketch.medium} · {selectedSketch.year}
@@ -134,7 +136,7 @@ export function SketchesGallery({ sketches, locale }: SketchesGalleryProps) {
                   type="button"
                   onClick={() => setZoomed((prev) => !prev)}
                   aria-label={zoomed ? t.zoomOutAria : t.zoomInAria}
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#141413] hover:bg-[#F3F2EE] transition-colors"
+                  className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE] transition-colors"
                 >
                   {zoomed ? <ZoomOut className="w-4 h-4" /> : <ZoomIn className="w-4 h-4" />}
                 </button>
@@ -145,7 +147,7 @@ export function SketchesGallery({ sketches, locale }: SketchesGalleryProps) {
                     setZoomed(false);
                   }}
                   aria-label={t.prevAria}
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#141413] hover:bg-[#F3F2EE] transition-colors"
+                  className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE] transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -156,7 +158,7 @@ export function SketchesGallery({ sketches, locale }: SketchesGalleryProps) {
                     setZoomed(false);
                   }}
                   aria-label={t.nextAria}
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#141413] hover:bg-[#F3F2EE] transition-colors"
+                  className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE] transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -167,7 +169,7 @@ export function SketchesGallery({ sketches, locale }: SketchesGalleryProps) {
                     setZoomed(false);
                   }}
                   aria-label={t.closeAria}
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-md text-[#575652] hover:text-[#141413] hover:bg-[#F3F2EE] transition-colors"
+                  className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#575652] hover:text-[#141413] hover:bg-[#F3F2EE] transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -183,14 +185,14 @@ export function SketchesGallery({ sketches, locale }: SketchesGalleryProps) {
                   src={selectedSketch.imageUrl}
                   alt={selectedSketch.title}
                   fit="contain"
-                  className={`w-full bg-white rounded-lg p-3 border border-[#E5E5E0] ${
+                  className={`w-full bg-white rounded-[2px] p-3 border border-[#D6D4CC] ${
                     zoomed ? 'min-h-[70vh]' : 'h-[62vh]'
                   }`}
                 />
               </div>
             </div>
 
-            <div className="px-5 py-3 border-t border-[#E5E5E0] flex items-center justify-between text-xs text-[#6B6A65]">
+            <div className="px-5 py-3 border-t border-[#D6D4CC] flex items-center justify-between text-xs text-[#6B6A65]">
               <span>{selectedSketch.subject}</span>
               <span className="font-mono-tabular">
                 {selectedIndex + 1} / {sketches.length}
