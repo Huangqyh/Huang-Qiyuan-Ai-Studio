@@ -112,6 +112,12 @@ export const UI_TEXT = {
       thesisHeading: 'Design Thesis',
       highlightsHeading: 'Key Deliverables',
       browseHint: 'Use ← / → keys to browse plates',
+      panHint: 'Drag plate to pan while zoomed',
+      inspect3dModel: 'Inspect 3D Model',
+      prevProject: 'Prev Project',
+      nextProject: 'Next Project',
+      copyProjectLink: 'Copy Project Link',
+      projectLinkCopied: 'Link Copied',
     },
     cv: {
       eyebrow: '04. Curriculum Vitae',
@@ -131,6 +137,9 @@ export const UI_TEXT = {
       resetSkill: 'Reset',
       skillsHint: 'Select any tool to highlight matching firms and filter portfolio projects.',
       communityHeading: 'Community Service & Leadership',
+      floatingFilterStatus: (skill: string, count: number) =>
+        `Skill: ${skill} · ${count} ${count === 1 ? 'Work' : 'Works'}`,
+      jumpToWorks: 'Jump to Works',
     },
     sketches: {
       eyebrow: '02. Observational Studies',
@@ -179,6 +188,7 @@ export const UI_TEXT = {
       noCompanionTitle: 'No companion photos uploaded yet',
       noCompanionHint: 'Add physical model or studio photos anytime in Owner Studio → 3D Models.',
       closePhotoViewerAria: 'Close photo viewer',
+      openCaseStudy: 'Open Studio Plates',
     },
     viewer3d: {
       viewportAria: (title: string) => `Interactive 3D viewport for ${title}`,
@@ -290,6 +300,12 @@ export const UI_TEXT = {
       thesisHeading: '设计概念与阐述',
       highlightsHeading: '核心成果',
       browseHint: '可使用键盘 ← / → 方向键切换图纸',
+      panHint: '放大后可按住拖拽平移图纸',
+      inspect3dModel: '查看三维模型',
+      prevProject: '上一项目',
+      nextProject: '下一项目',
+      copyProjectLink: '复制项目链接',
+      projectLinkCopied: '链接已复制',
     },
     cv: {
       eyebrow: '04. 个人简历',
@@ -309,6 +325,9 @@ export const UI_TEXT = {
       resetSkill: '重置',
       skillsHint: '点击任意工具标签，可高亮关联实习经历并筛选对应作品集项目。',
       communityHeading: '社区服务与领导力',
+      floatingFilterStatus: (skill: string, count: number) =>
+        `筛选工具：${skill} · 匹配 ${count} 项作品`,
+      jumpToWorks: '跳转至作品',
     },
     sketches: {
       eyebrow: '02. 观察性手绘研究',
@@ -356,6 +375,7 @@ export const UI_TEXT = {
       noCompanionTitle: '暂未上传配套照片',
       noCompanionHint: '可在后台管理中随时添加实体模型或场地照片。',
       closePhotoViewerAria: '关闭照片浏览窗',
+      openCaseStudy: '查看项目图纸',
     },
     viewer3d: {
       viewportAria: (title: string) => `${title} 的交互式三维视口`,

@@ -1,6 +1,6 @@
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { Lock } from 'lucide-react';
-import { MotionConfig } from 'motion/react';
+import { ArrowUp, Lock, X } from 'lucide-react';
+import { AnimatePresence, motion, MotionConfig } from 'motion/react';
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { CurriculumVitaeSection } from './components/CurriculumVitaeSection';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -10,6 +10,7 @@ import { ModelsShowcaseSection } from './components/ModelsShowcaseSection';
 import { SelectedWorksSection } from './components/SelectedWorksSection';
 import { ShareShowcaseSection } from './components/ShareShowcaseSection';
 import { SketchesGallery } from './components/SketchesGallery';
+import { ARCHITECTURAL_EASE } from './components/SketchMotion';
 
 const OwnerStudioPage = lazy(() =>
   import('./components/OwnerStudioPage').then((m) => ({ default: m.OwnerStudioPage }))
@@ -46,6 +47,7 @@ import {
   addProjectToPortfolio,
   addSketchToPortfolio,
   addSkillToGroup,
+  buildProjectDeepLinkUrl,
   buildPublicVisitorUrl,
   CanvasSurface,
   CategoryFilter,
@@ -56,6 +58,7 @@ import {
   deleteProjectFromPortfolio,
   deleteSketchFromPortfolio,
   filterProjects,
+  findLinkedModelId,
   isOwnerStudioRoute,
   NewCommunityInput,
   NewExperienceInput,
@@ -63,6 +66,7 @@ import {
   NewProjectInput,
   NewSketchInput,
   parseImportedPortfolioJson,
+  parseProjectIdFromSearch,
   removeSkillFromGroup,
   updateProfileInfo,
 } from './utils/portfolioLogic';
@@ -100,10 +104,37 @@ function PortfolioApp() {
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSkill, setActiveSkill] = useState<string | null>(null);
-  const [selectedProject, setSelectedProject] = useState<PortfolioProject | null>(null);
+  const [selectedProject, setSelectedProject] = useState<PortfolioProject | null>(() => {
+    if (typeof window === 'undefined' || detectAdminRoute()) return null;
+    const requestedId = parseProjectIdFromSearch(window.location.search);
+    if (!requestedId) return null;
+    return INITIAL_PORTFOLIO_DATA.projects.find((p) => p.id === requestedId) ?? null;
+  });
+  const [hasOpenedLightbox, setHasOpenedLightbox] = useState<boolean>(
+    () => selectedProject !== null
+  );
+  const [selectedSketchIndex, setSelectedSketchIndex] = useState<number | null>(null);
+  const [activeModelId, setActiveModelId] = useState<string | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
   const hasAutoSeededRef = useRef(false);
+
+  useEffect(() => {
+    if (selectedProject) {
+      setHasOpenedLightbox(true);
+    }
+  }, [selectedProject]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || isOwnerRoute) return;
+    const targetUrl = buildProjectDeepLinkUrl(
+      window.location.href,
+      selectedProject?.id ?? null
+    );
+    if (targetUrl !== window.location.href) {
+      window.history.replaceState({}, '', targetUrl);
+    }
+  }, [selectedProject?.id, isOwnerRoute]);
 
   // Listen to browser navigation between Public Visitor Webpage and Private Owner Studio
   useEffect(() => {
@@ -216,7 +247,37 @@ function PortfolioApp() {
     [selectedProject, localizedData.projects]
   );
 
+  const linkedModelId = useMemo(
+    () =>
+      activeSelectedProject
+        ? findLinkedModelId(activeSelectedProject.id, localizedData.models)
+        : null,
+    [activeSelectedProject, localizedData.models]
+  );
+
   const toggleLocale = () => setLocale((prev) => (prev === 'en' ? 'zh' : 'en'));
+
+  const handleOpenHeroPlate = () => {
+    const matchIndex = localizedData.sketches.findIndex(
+      (s) => s.imageUrl === localizedData.profile.heroPlateUrl
+    );
+    setSelectedSketchIndex(matchIndex >= 0 ? matchIndex : 0);
+  };
+
+  const handleInspect3DModel = (modelId: string) => {
+    setSelectedProject(null);
+    setActiveModelId(modelId);
+    window.requestAnimationFrame(() => {
+      document.getElementById('models')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
+  const handleOpenProjectPlates = (projectId: string) => {
+    const matched = localizedData.projects.find((p) => p.id === projectId);
+    if (!matched) return;
+    setHasOpenedLightbox(true);
+    setSelectedProject(matched);
+  };
 
   const publicVisitorUrl = useMemo(() => {
     if (typeof window === 'undefined') return 'https://portfolio.example.com/';
@@ -498,10 +559,7 @@ function PortfolioApp() {
             copiedLink={copiedLink}
             onChangeSurface={setCanvasSurface}
             onCopyShowcaseLink={handleCopyPublicLink}
-            onOpenHeroPlate={() => {
-              const firstFeatured = localizedData.projects[0];
-              if (firstFeatured) setSelectedProject(firstFeatured);
-            }}
+            onOpenHeroPlate={handleOpenHeroPlate}
           />
 
           <SelectedWorksSection
@@ -514,12 +572,27 @@ function PortfolioApp() {
             onCategoryChange={setCategoryFilter}
             onSearchChange={setSearchQuery}
             onClearSkillFilter={() => setActiveSkill(null)}
-            onSelectProject={setSelectedProject}
+            onSelectProject={(project) => {
+              setHasOpenedLightbox(true);
+              setSelectedProject(project);
+            }}
           />
 
-          <SketchesGallery sketches={localizedData.sketches} locale={locale} />
+          <SketchesGallery
+            sketches={localizedData.sketches}
+            locale={locale}
+            selectedIndex={selectedSketchIndex}
+            onSelectIndex={setSelectedSketchIndex}
+          />
 
-          <ModelsShowcaseSection models={localizedData.models} locale={locale} />
+          <ModelsShowcaseSection
+            models={localizedData.models}
+            locale={locale}
+            activeModelId={activeModelId}
+            onSelectModelId={setActiveModelId}
+            projects={localizedData.projects}
+            onOpenProjectPlates={handleOpenProjectPlates}
+          />
 
           <CurriculumVitaeSection
             experiences={localizedData.experiences}
@@ -541,6 +614,42 @@ function PortfolioApp() {
             onCopyShowcaseLink={handleCopyPublicLink}
           />
         </main>
+
+        {/* Cross-section Floating Skill Filter Bar */}
+        <AnimatePresence>
+          {activeSkill && !activeSelectedProject && selectedSketchIndex === null && (
+            <motion.div
+              key="floating-skill-bar"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 16 }}
+              transition={{ duration: 0.2, ease: ARCHITECTURAL_EASE }}
+              className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 max-w-[calc(100vw-2rem)] bg-[#141413] text-white border border-[#2C2C2A] rounded-[2px] shadow-xl px-4 py-2.5 flex items-center gap-3 text-xs no-print"
+            >
+              <span className="font-mono-tabular whitespace-nowrap">
+                {t.cv.floatingFilterStatus(activeSkill, filteredProjects.length)}
+              </span>
+              <button
+                type="button"
+                onClick={() =>
+                  document.getElementById('works')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                }
+                className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold bg-[#9E3B2E] hover:bg-[#7F2D22] text-white rounded-[2px] transition-colors whitespace-nowrap"
+              >
+                <ArrowUp className="w-3 h-3" aria-hidden="true" />
+                {t.cv.jumpToWorks}
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveSkill(null)}
+                aria-label={t.cv.clearSkillAria(activeSkill)}
+                className="inline-flex items-center justify-center w-6 h-6 rounded-[2px] text-white/75 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                <X className="w-3.5 h-3.5" aria-hidden="true" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <footer className="border-t border-[#D6D4CC] bg-[#FAFAF8] py-8 no-print">
           <div className="max-w-[1240px] mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6B6A65]">
@@ -584,12 +693,16 @@ function PortfolioApp() {
           </div>
         </footer>
 
-        {activeSelectedProject && (
+        {hasOpenedLightbox && (
           <Suspense fallback={null}>
             <ProjectLightbox
               project={activeSelectedProject}
               locale={locale}
               onClose={() => setSelectedProject(null)}
+              projects={localizedData.projects}
+              onSelectProject={setSelectedProject}
+              linkedModelId={linkedModelId}
+              onInspect3DModel={handleInspect3DModel}
             />
           </Suspense>
         )}

@@ -1,4 +1,5 @@
 import { Camera, Maximize2, Minimize2, RotateCcw, RefreshCw } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -6,6 +7,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { Locale, UI_TEXT } from '../i18n/translations';
 import { resolveThumbnailSrc } from './ArchitecturalImage';
+import { ARCHITECTURAL_EASE, SHEET_TRANSITION } from './SketchMotion';
 
 export type RenderMode = 'clay' | 'materials' | 'wireframe';
 
@@ -160,6 +162,7 @@ export function ModelViewer3D({
   const autoRotateRef = useRef<boolean>(autoRotate);
   const isVisibleRef = useRef<boolean>(isVisible);
   const requestRenderRef = useRef<() => void>(() => {});
+  const resetAnimRef = useRef<number>(0);
 
   renderModeRef.current = renderMode;
   autoRotateRef.current = autoRotate;
@@ -400,6 +403,7 @@ export function ModelViewer3D({
     requestRenderRef.current = requestRender;
 
     const handleControlStart = () => {
+      cancelAnimationFrame(resetAnimRef.current);
       isInteracting = true;
       dampingUntil = performance.now() + 800;
       requestRender();
@@ -548,6 +552,7 @@ export function ModelViewer3D({
     return () => {
       cancelled = true;
       cancelAnimationFrame(rafId);
+      cancelAnimationFrame(resetAnimRef.current);
       clearTimeout(timerId);
       resizeObserver.disconnect();
       controls.removeEventListener('start', handleControlStart);
@@ -590,10 +595,40 @@ export function ModelViewer3D({
     const ctrls = controlsRef.current;
     const def = defaultViewRef.current;
     if (!cam || !ctrls || !def) return;
-    cam.position.copy(def.position);
-    ctrls.target.copy(def.target);
-    ctrls.update();
-    requestRenderRef.current();
+
+    cancelAnimationFrame(resetAnimRef.current);
+
+    const prefersReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReduced || detectSoftwareWebGL()) {
+      cam.position.copy(def.position);
+      ctrls.target.copy(def.target);
+      ctrls.update();
+      requestRenderRef.current();
+      return;
+    }
+
+    const startPos = cam.position.clone();
+    const startTarget = ctrls.target.clone();
+    const startTime = performance.now();
+    const duration = 420;
+
+    const tick = (now: number) => {
+      const elapsed = now - startTime;
+      const tNorm = Math.min(1, elapsed / duration);
+      const eased = 1 - Math.pow(1 - tNorm, 3);
+      cam.position.lerpVectors(startPos, def.position, eased);
+      ctrls.target.lerpVectors(startTarget, def.target, eased);
+      ctrls.update();
+      requestRenderRef.current();
+      if (tNorm < 1) {
+        resetAnimRef.current = requestAnimationFrame(tick);
+      }
+    };
+
+    resetAnimRef.current = requestAnimationFrame(tick);
   };
 
   const handleToggleFullscreen = async () => {
@@ -636,13 +671,19 @@ export function ModelViewer3D({
                 key={mode.id}
                 type="button"
                 onClick={() => setRenderMode(mode.id)}
-                className={`px-2.5 py-1 text-xs font-medium rounded-[1px] transition-colors ${
-                  active
-                    ? 'bg-white text-[#141413] shadow-2xs'
-                    : 'text-[#575652] hover:text-[#141413]'
+                className={`relative px-2.5 py-1 text-xs font-medium rounded-[1px] transition-colors ${
+                  active ? 'text-[#141413]' : 'text-[#575652] hover:text-[#141413]'
                 }`}
               >
-                {mode.label}
+                {active && (
+                  <motion.span
+                    layoutId="viewer3d-mode-pill"
+                    transition={SHEET_TRANSITION}
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-white shadow-2xs rounded-[1px]"
+                  />
+                )}
+                <span className="relative z-10">{mode.label}</span>
               </button>
             );
           })}
@@ -688,38 +729,47 @@ export function ModelViewer3D({
       <div className="relative flex-1 min-h-[380px]">
         <div ref={canvasHostRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
 
-        {isLoading && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden bg-[#F5F4EF]">
-            {posterThumbUrl && (
-              <img
-                src={posterThumbUrl}
-                alt={title}
-                className="absolute inset-0 w-full h-full object-cover opacity-30"
-              />
-            )}
-            <div className="relative z-10 flex flex-col items-center px-6 py-5 bg-[#FAFAF8]/92 border border-[#D6D4CC] rounded-[2px] text-center max-w-xs w-full mx-4">
-              <p className="font-mono-tabular text-xs text-[#141413] mb-2">
-                {t.loading} {loadProgress > 0 ? `${loadProgress}%` : ''}
-              </p>
-              <div className="w-full h-1.5 bg-[#E5E4DC] rounded-none overflow-hidden">
-                <div
-                  className="h-full bg-[#9E3B2E] transition-all duration-150"
-                  style={{ width: `${Math.max(12, loadProgress)}%` }}
+        <AnimatePresence>
+          {isLoading && (
+            <motion.div
+              key="viewer3d-loader"
+              initial={{ opacity: 1 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.32, ease: ARCHITECTURAL_EASE }}
+              className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden bg-[#F5F4EF]"
+            >
+              {posterThumbUrl && (
+                <img
+                  src={posterThumbUrl}
+                  alt={title}
+                  className="absolute inset-0 w-full h-full object-cover opacity-30"
                 />
-              </div>
-              {onSwitchToPhotos && (
-                <button
-                  type="button"
-                  onClick={onSwitchToPhotos}
-                  className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-mono-tabular uppercase tracking-wider text-[#141413] bg-white border border-[#D6D4CC] hover:border-[#9E3B2E] hover:text-[#9E3B2E] rounded-[2px] transition-colors"
-                >
-                  <Camera className="w-3 h-3" aria-hidden="true" />
-                  {t.viewPhotosFallback}
-                </button>
               )}
-            </div>
-          </div>
-        )}
+              <div className="relative z-10 flex flex-col items-center px-6 py-5 bg-[#FAFAF8]/92 border border-[#D6D4CC] rounded-[2px] text-center max-w-xs w-full mx-4">
+                <p className="font-mono-tabular text-xs text-[#141413] mb-2">
+                  {t.loading} {loadProgress > 0 ? `${loadProgress}%` : ''}
+                </p>
+                <div className="w-full h-1.5 bg-[#E5E4DC] rounded-none overflow-hidden">
+                  <div
+                    className="h-full bg-[#9E3B2E] transition-all duration-150"
+                    style={{ width: `${Math.max(12, loadProgress)}%` }}
+                  />
+                </div>
+                {onSwitchToPhotos && (
+                  <button
+                    type="button"
+                    onClick={onSwitchToPhotos}
+                    className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-mono-tabular uppercase tracking-wider text-[#141413] bg-white border border-[#D6D4CC] hover:border-[#9E3B2E] hover:text-[#9E3B2E] rounded-[2px] transition-colors"
+                  >
+                    <Camera className="w-3 h-3" aria-hidden="true" />
+                    {t.viewPhotosFallback}
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {loadError && !isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden bg-[#F5F4EF] px-6 text-center">

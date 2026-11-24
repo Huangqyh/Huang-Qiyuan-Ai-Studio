@@ -1,4 +1,5 @@
-import { ChevronDown, ChevronUp, Printer, X } from 'lucide-react';
+import { ChevronDown, Printer, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import { Locale, UI_TEXT } from '../i18n/translations';
 import {
@@ -9,7 +10,7 @@ import {
   WorkExperience,
 } from '../types/portfolio';
 import { getMatchingExperienceIds } from '../utils/portfolioLogic';
-import { InkDivider, InkUnderline, StaggerRevealItem } from './SketchMotion';
+import { ARCHITECTURAL_EASE, InkDivider, InkUnderline, StaggerRevealItem } from './SketchMotion';
 
 interface CurriculumVitaeSectionProps {
   experiences: WorkExperience[];
@@ -137,40 +138,50 @@ export function CurriculumVitaeSection({
                                   ? t.expandAria(exp.company)
                                   : t.collapseAria(exp.company)
                               }
-                              className="no-print inline-flex items-center justify-center w-8 h-8 rounded-md text-[#6B6A65] hover:text-[#141413] hover:bg-[#F3F2EE] transition-colors"
+                              className="no-print inline-flex items-center justify-center w-8 h-8 rounded-[2px] text-[#6B6A65] hover:text-[#141413] hover:bg-[#F3F2EE] transition-colors"
                             >
-                              {isCollapsed ? (
-                                <ChevronDown className="w-4 h-4" />
-                              ) : (
-                                <ChevronUp className="w-4 h-4" />
-                              )}
+                              <ChevronDown
+                                className={`w-4 h-4 transition-transform duration-200 ${
+                                  isCollapsed ? '' : 'rotate-180'
+                                }`}
+                                aria-hidden="true"
+                              />
                             </button>
                           </div>
                         </div>
 
-                        {!isCollapsed && (
-                          <>
-                            <ul className="space-y-2 text-sm text-[#575652] leading-relaxed mt-4">
-                              {exp.highlights.map((bullet, idx) => (
-                                <li key={idx} className="flex items-start gap-2.5">
-                                  <span
-                                    className="font-mono-tabular text-[11px] text-[#9A9890] mt-1 shrink-0"
-                                    aria-hidden="true"
-                                  >
-                                    —
-                                  </span>
-                                  <span>{bullet}</span>
-                                </li>
-                              ))}
-                            </ul>
+                        <AnimatePresence initial={false}>
+                          {!isCollapsed && (
+                            <motion.div
+                              key={`${exp.id}-details`}
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.24, ease: ARCHITECTURAL_EASE }}
+                              className="overflow-hidden"
+                            >
+                              <ul className="space-y-2 text-sm text-[#575652] leading-relaxed mt-4">
+                                {exp.highlights.map((bullet, idx) => (
+                                  <li key={idx} className="flex items-start gap-2.5">
+                                    <span
+                                      className="font-mono-tabular text-[11px] text-[#9A9890] mt-1 shrink-0"
+                                      aria-hidden="true"
+                                    >
+                                      —
+                                    </span>
+                                    <span>{bullet}</span>
+                                  </li>
+                                ))}
+                              </ul>
 
-                            {exp.tools.length > 0 && (
-                              <p className="mt-4 pt-3 border-t border-[#F0EFEA] text-xs text-[#6B6A65]">
-                                {t.toolsUsed} {exp.tools.join(' · ')}
-                              </p>
-                            )}
-                          </>
-                        )}
+                              {exp.tools.length > 0 && (
+                                <p className="mt-4 pt-3 border-t border-[#F0EFEA] text-xs text-[#6B6A65]">
+                                  {t.toolsUsed} {exp.tools.join(' · ')}
+                                </p>
+                              )}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
                       </article>
                     </StaggerRevealItem>

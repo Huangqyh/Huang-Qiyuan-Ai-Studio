@@ -583,6 +583,45 @@ export function isPublicShowcaseMode(search: string): boolean {
   return params.get('view') === 'showcase';
 }
 
+export const PROJECT_MODEL_LINKS: ReadonlyArray<{ projectId: string; modelId: string }> = [
+  { projectId: 'permeable-sports-corridor', modelId: 'y3s2-permeable-sports-corridor' },
+  { projectId: '3rs-heritage-rethought', modelId: 'y3s1-model' },
+  { projectId: 'bend-boo-climatic-facade', modelId: 'y2s2-bend-boo' },
+  { projectId: 'open-celmer', modelId: 'y2s1-open-celmer' },
+];
+
+export function findLinkedModelId(projectId: string, models: Model3DItem[]): string | null {
+  const link = PROJECT_MODEL_LINKS.find((entry) => entry.projectId === projectId);
+  if (!link) return null;
+  return models.some((model) => model.id === link.modelId) ? link.modelId : null;
+}
+
+export function findLinkedProjectId(modelId: string, projects: PortfolioProject[]): string | null {
+  const link = PROJECT_MODEL_LINKS.find((entry) => entry.modelId === modelId);
+  if (!link) return null;
+  return projects.some((project) => project.id === link.projectId) ? link.projectId : null;
+}
+
+export function parseProjectIdFromSearch(search: string): string | null {
+  const params = new URLSearchParams(search);
+  const value = params.get('project')?.trim();
+  return value ? value : null;
+}
+
+export function buildProjectDeepLinkUrl(href: string, projectId: string | null): string {
+  try {
+    const url = new URL(href);
+    if (projectId) {
+      url.searchParams.set('project', projectId);
+    } else {
+      url.searchParams.delete('project');
+    }
+    return url.toString();
+  } catch {
+    return href;
+  }
+}
+
 export function isOwnerStudioRoute(pathname: string, hash: string, search: string): boolean {
   const cleanPath = pathname.toLowerCase();
   const cleanHash = hash.toLowerCase();

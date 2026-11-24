@@ -1,14 +1,16 @@
 import { ArrowUpRight, Layers, Search, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import { Locale, UI_TEXT } from '../i18n/translations';
 import { PortfolioProject, ProjectCategory } from '../types/portfolio';
 import { CategoryFilter } from '../utils/portfolioLogic';
 import { ArchitecturalImage } from './ArchitecturalImage';
 import {
+  ARCHITECTURAL_EASE,
   DraftingCornerMarks,
   InkDivider,
   InkUnderline,
-  StaggerRevealItem,
+  SHEET_TRANSITION,
 } from './SketchMotion';
 
 interface SelectedWorksSectionProps {
@@ -64,7 +66,7 @@ export function SelectedWorksSection({
   const archiveRemainder = projects.length - featuredProjects.length;
 
   return (
-    <section id="works" className="pt-14 pb-16 lg:pt-16 lg:pb-20 bg-transparent">
+    <section id="works" className="pt-14 pb-16 lg:pt-16 lg:pb-20 bg-transparent no-print">
       <div className="max-w-[1240px] mx-auto px-5 sm:px-8">
         {/* Section Heading & Controls */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
@@ -114,13 +116,19 @@ export function SelectedWorksSection({
                   type="button"
                   aria-selected={active}
                   onClick={() => onCategoryChange(category)}
-                  className={`px-3.5 py-1.5 text-xs font-medium rounded-[1px] transition-colors duration-150 whitespace-nowrap shrink-0 ${
-                    active
-                      ? 'bg-[#141413] text-white'
-                      : 'text-[#575652] hover:text-[#141413]'
+                  className={`relative px-3.5 py-1.5 text-xs font-medium rounded-[1px] transition-colors duration-150 whitespace-nowrap shrink-0 ${
+                    active ? 'text-white' : 'text-[#575652] hover:text-[#141413]'
                   }`}
                 >
-                  {t.categories[category]}
+                  {active && (
+                    <motion.span
+                      layoutId="works-category-pill"
+                      transition={SHEET_TRANSITION}
+                      aria-hidden="true"
+                      className="absolute inset-0 bg-[#141413] rounded-[1px]"
+                    />
+                  )}
+                  <span className="relative z-10">{t.categories[category]}</span>
                 </button>
               );
             })}
@@ -168,119 +176,129 @@ export function SelectedWorksSection({
                 hasCuratedSubset && !showArchive ? 'lg:grid-cols-2 gap-7' : 'lg:grid-cols-12 gap-7'
               }`}
             >
-              {displayedProjects.map((project, index) => {
-                const useTwoColHeroGrid = hasCuratedSubset && !showArchive;
-                const isLeadFeature =
-                  !useTwoColHeroGrid &&
-                  categoryFilter === 'All' &&
-                  !searchQuery &&
-                  !activeSkill &&
-                  index < 2;
-                const coverPlate = project.plates[0];
-                const coverImageUrl = PROJECT_COVER_OVERRIDES[project.id] || coverPlate?.imageUrl;
-                const plateLabel = `${project.plates.length} ${
-                  project.plates.length === 1 ? t.plateSingular : t.platePlural
-                }`;
-                const titleBlockCode = `${coverPlate?.plateNumber || `PRJ. 0${index + 1}`} · ${
-                  project.scale
-                } · ${project.tools.slice(0, 2).join(' · ').toUpperCase()}`;
+              <AnimatePresence mode="popLayout">
+                {displayedProjects.map((project, index) => {
+                  const useTwoColHeroGrid = hasCuratedSubset && !showArchive;
+                  const isLeadFeature =
+                    !useTwoColHeroGrid &&
+                    categoryFilter === 'All' &&
+                    !searchQuery &&
+                    !activeSkill &&
+                    index < 2;
+                  const coverPlate = project.plates[0];
+                  const coverImageUrl = PROJECT_COVER_OVERRIDES[project.id] || coverPlate?.imageUrl;
+                  const plateLabel = `${project.plates.length} ${
+                    project.plates.length === 1 ? t.plateSingular : t.platePlural
+                  }`;
+                  const titleBlockCode = `${coverPlate?.plateNumber || `PRJ. 0${index + 1}`} · ${
+                    project.scale
+                  } · ${project.tools.slice(0, 2).join(' · ').toUpperCase()}`;
 
-                return (
-                  <StaggerRevealItem
-                    key={project.id}
-                    index={index}
-                    className={
-                      useTwoColHeroGrid
-                        ? 'flex'
-                        : isLeadFeature
-                          ? 'lg:col-span-6 flex'
-                          : 'lg:col-span-4 flex'
-                    }
-                  >
-                    <article className="group w-full flex flex-col bg-white border border-[#D6D4CC] rounded-[2px] overflow-hidden transition-all duration-220 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-[#9E3B2E]/60 hover:shadow-[0_14px_30px_-20px_rgba(20,20,19,0.28)] print-break-avoid">
-                      <button
-                        type="button"
-                        onClick={() => onSelectProject(project)}
-                        aria-label={t.openAria(project.title)}
-                        className="flex flex-col flex-1 text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#9E3B2E]"
-                      >
-                        {/* Uniform 4:3 Full-Bleed Architectural Plate Frame */}
-                        <div className="relative aspect-[4/3] w-full overflow-hidden border-b border-[#D6D4CC] bg-[#F7F6F2]">
-                          <ArchitecturalImage
-                            src={coverImageUrl}
-                            alt={`${project.title} — ${coverPlate?.caption || project.subtitle}`}
-                            title={project.title}
-                            plateNumber={coverPlate?.plateNumber || `PRJ. 0${index + 1}`}
-                            variant="thumbnail"
-                            fit="cover"
-                            className="w-full h-full bg-[#F7F6F2]"
-                            imgClassName="transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.035] group-focus-within:scale-[1.035]"
-                          />
+                  return (
+                    <motion.div
+                      key={project.id}
+                      layout="position"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.98 }}
+                      transition={{
+                        duration: 0.28,
+                        delay: Math.min(index, 4) * 0.04,
+                        ease: ARCHITECTURAL_EASE,
+                      }}
+                      className={
+                        useTwoColHeroGrid
+                          ? 'flex'
+                          : isLeadFeature
+                            ? 'lg:col-span-6 flex'
+                            : 'lg:col-span-4 flex'
+                      }
+                    >
+                      <article className="group w-full flex flex-col bg-white border border-[#D6D4CC] rounded-[2px] overflow-hidden transition-all duration-220 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-[#9E3B2E]/60 hover:shadow-[0_14px_30px_-20px_rgba(20,20,19,0.28)] print-break-avoid">
+                        <button
+                          type="button"
+                          onClick={() => onSelectProject(project)}
+                          aria-label={t.openAria(project.title)}
+                          className="flex flex-col flex-1 text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#9E3B2E]"
+                        >
+                          {/* Uniform 4:3 Full-Bleed Architectural Plate Frame */}
+                          <div className="relative aspect-[4/3] w-full overflow-hidden border-b border-[#D6D4CC] bg-[#F7F6F2]">
+                            <ArchitecturalImage
+                              src={coverImageUrl}
+                              alt={`${project.title} — ${coverPlate?.caption || project.subtitle}`}
+                              title={project.title}
+                              plateNumber={coverPlate?.plateNumber || `PRJ. 0${index + 1}`}
+                              variant="thumbnail"
+                              fit="cover"
+                              className="w-full h-full bg-[#F7F6F2]"
+                              imgClassName="transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.035] group-focus-within:scale-[1.035]"
+                            />
 
-                          {/* Subtle Ink-Wash Reveal Veil on Hover / Keyboard Focus */}
-                          <div
-                            aria-hidden="true"
-                            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#141413]/75 via-[#141413]/20 to-transparent opacity-0 transition-opacity duration-220 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-focus-within:opacity-100"
-                          />
+                            {/* Subtle Ink-Wash Reveal Veil on Hover / Keyboard Focus */}
+                            <div
+                              aria-hidden="true"
+                              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#141413]/75 via-[#141413]/20 to-transparent opacity-0 transition-opacity duration-220 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-focus-within:opacity-100"
+                            />
 
-                          {/* Architectural Corner Drafting Crop Marks */}
-                          <DraftingCornerMarks tone="light" />
+                            {/* Architectural Corner Drafting Crop Marks */}
+                            <DraftingCornerMarks tone="light" />
 
-                          {/* Reveal Footer Cue inside Veil */}
-                          <div
-                            aria-hidden="true"
-                            className="pointer-events-none absolute inset-x-0 bottom-0 px-5 py-3.5 flex items-end justify-between gap-3 text-white translate-y-2 opacity-0 transition-all duration-220 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
-                          >
-                            <div className="flex items-center gap-2 text-xs font-mono-tabular text-white/95">
-                              <Layers className="w-3.5 h-3.5 text-white/90 shrink-0" />
-                              <span>{plateLabel}</span>
+                            {/* Reveal Footer Cue inside Veil */}
+                            <div
+                              aria-hidden="true"
+                              className="pointer-events-none absolute inset-x-0 bottom-0 px-5 py-3.5 flex items-end justify-between gap-3 text-white translate-y-2 opacity-0 transition-all duration-220 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
+                            >
+                              <div className="flex items-center gap-2 text-xs font-mono-tabular text-white/95">
+                                <Layers className="w-3.5 h-3.5 text-white/90 shrink-0" />
+                                <span>{plateLabel}</span>
+                              </div>
+                              <span className="inline-flex items-center gap-1 text-xs font-semibold tracking-wide text-white whitespace-nowrap shrink-0">
+                                {t.viewPlates}
+                                <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                              </span>
                             </div>
-                            <span className="inline-flex items-center gap-1 text-xs font-semibold tracking-wide text-white whitespace-nowrap shrink-0">
-                              {t.viewPlates}
-                              <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Title-Block Metadata & Unclipped Summary */}
-                        <div className="p-5 sm:p-6 flex flex-col flex-1 justify-between gap-4">
-                          <div>
-                            <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono-tabular text-[11px] uppercase tracking-wider text-[#6B6A65] mb-2">
-                              <span>{t.categories[project.category] ?? project.category}</span>
-                              <span aria-hidden="true">·</span>
-                              <span>{project.year}</span>
-                              <span aria-hidden="true">·</span>
-                              <span>{plateLabel}</span>
-                            </div>
-
-                            <div className="flex items-start justify-between gap-3">
-                              <h3 className="font-editorial text-2xl font-semibold text-[#141413] leading-tight group-hover:text-[#9E3B2E] transition-colors">
-                                {project.title}
-                              </h3>
-                              <ArrowUpRight
-                                className="w-4 h-4 text-[#8A8882] group-hover:text-[#9E3B2E] shrink-0 mt-1 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                                aria-hidden="true"
-                              />
-                            </div>
-
-                            <p className="mt-2 text-sm text-[#575652] leading-relaxed">
-                              {project.summary}
-                            </p>
                           </div>
 
-                          {/* Title-Block Sheet Stamp Footer */}
-                          <div className="pt-3 border-t border-[#E6E4DC] flex items-center justify-between gap-3 font-mono-tabular text-[11px] text-[#6B6A65]">
-                            <span className="truncate">{titleBlockCode}</span>
-                            <span className="shrink-0 text-[#9E3B2E] font-medium">
-                              {project.studioOrContext.split('·')[0].trim()}
-                            </span>
+                          {/* Title-Block Metadata & Unclipped Summary */}
+                          <div className="p-5 sm:p-6 flex flex-col flex-1 justify-between gap-4">
+                            <div>
+                              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono-tabular text-[11px] uppercase tracking-wider text-[#6B6A65] mb-2">
+                                <span>{t.categories[project.category] ?? project.category}</span>
+                                <span aria-hidden="true">·</span>
+                                <span>{project.year}</span>
+                                <span aria-hidden="true">·</span>
+                                <span>{plateLabel}</span>
+                              </div>
+
+                              <div className="flex items-start justify-between gap-3">
+                                <h3 className="font-editorial text-2xl font-semibold text-[#141413] leading-tight group-hover:text-[#9E3B2E] transition-colors">
+                                  {project.title}
+                                </h3>
+                                <ArrowUpRight
+                                  className="w-4 h-4 text-[#8A8882] group-hover:text-[#9E3B2E] shrink-0 mt-1 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                                  aria-hidden="true"
+                                />
+                              </div>
+
+                              <p className="mt-2 text-sm text-[#575652] leading-relaxed">
+                                {project.summary}
+                              </p>
+                            </div>
+
+                            {/* Title-Block Sheet Stamp Footer */}
+                            <div className="pt-3 border-t border-[#E6E4DC] flex items-center justify-between gap-3 font-mono-tabular text-[11px] text-[#6B6A65]">
+                              <span className="truncate">{titleBlockCode}</span>
+                              <span className="shrink-0 text-[#9E3B2E] font-medium">
+                                {project.studioOrContext.split('·')[0].trim()}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      </button>
-                    </article>
-                  </StaggerRevealItem>
-                );
-              })}
+                        </button>
+                      </article>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
 
             {hasCuratedSubset && archiveRemainder > 0 && (

@@ -1,9 +1,17 @@
-import { Box, Camera, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
+import { ArrowUpRight, Box, Camera, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Locale, UI_TEXT } from '../i18n/translations';
-import { Model3DItem } from '../types/portfolio';
+import { Model3DItem, PortfolioProject } from '../types/portfolio';
+import { findLinkedProjectId } from '../utils/portfolioLogic';
 import { ArchitecturalImage } from './ArchitecturalImage';
-import { InkDivider, InkUnderline } from './SketchMotion';
+import {
+  ARCHITECTURAL_EASE,
+  InkDivider,
+  InkUnderline,
+  SHEET_TRANSITION,
+  useBodyScrollLock,
+} from './SketchMotion';
 
 const ModelViewer3D = lazy(() =>
   import('./ModelViewer3D').then((m) => ({ default: m.ModelViewer3D }))
@@ -12,14 +20,25 @@ const ModelViewer3D = lazy(() =>
 interface ModelsShowcaseSectionProps {
   models: Model3DItem[];
   locale: Locale;
+  activeModelId?: string | null;
+  onSelectModelId?: (id: string) => void;
+  projects?: PortfolioProject[];
+  onOpenProjectPlates?: (projectId: string) => void;
 }
 
-export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionProps) {
+export function ModelsShowcaseSection({
+  models,
+  locale,
+  activeModelId,
+  onSelectModelId,
+  projects,
+  onOpenProjectPlates,
+}: ModelsShowcaseSectionProps) {
   const t = UI_TEXT[locale].models;
   const sectionRef = useRef<HTMLElement>(null);
   const [hasEnteredProximity, setHasEnteredProximity] = useState(false);
   const [isViewportVisible, setIsViewportVisible] = useState(false);
-  const [selectedModelIndex, setSelectedModelIndex] = useState(0);
+  const [internalModelIndex, setInternalModelIndex] = useState(0);
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [stageTab, setStageTab] = useState<'3d' | 'photos'>('3d');
   const [stagePhotoIndex, setStagePhotoIndex] = useState(0);
@@ -61,9 +80,23 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
     };
   }, []);
 
+  const controlledIdx = activeModelId ? models.findIndex((m) => m.id === activeModelId) : -1;
   const safeModelIndex =
-    models.length > 0 ? Math.min(selectedModelIndex, models.length - 1) : 0;
+    controlledIdx >= 0
+      ? controlledIdx
+      : models.length > 0
+        ? Math.min(internalModelIndex, models.length - 1)
+        : 0;
   const activeModel = models[safeModelIndex] ?? null;
+
+  const selectModelAt = (idx: number) => {
+    setInternalModelIndex(idx);
+    const chosen = models[idx];
+    if (chosen) onSelectModelId?.(chosen.id);
+  };
+
+  const linkedProjectId =
+    activeModel && projects ? findLinkedProjectId(activeModel.id, projects) : null;
 
   const variants = activeModel?.variants ?? [];
   const safeVariantIndex =
@@ -109,11 +142,13 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
       ? activeModel.photos[photoLightboxIndex] ?? null
       : null;
 
+  useBodyScrollLock(Boolean(activePhoto));
+
   return (
     <section
       ref={sectionRef}
       id="models"
-      className="pt-14 pb-16 lg:pt-16 lg:pb-20 bg-transparent scroll-mt-20"
+      className="pt-14 pb-16 lg:pt-16 lg:pb-20 bg-transparent scroll-mt-20 no-print"
     >
       <div className="max-w-[1240px] mx-auto px-5 sm:px-8">
         {/* Section Heading */}
@@ -149,7 +184,7 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                   role="tab"
                   type="button"
                   aria-selected={active}
-                  onClick={() => setSelectedModelIndex(idx)}
+                  onClick={() => selectModelAt(idx)}
                   className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-[2px] border transition-colors whitespace-nowrap ${
                     active
                       ? 'bg-[#141413] text-white border-[#141413]'
@@ -198,28 +233,48 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                     type="button"
                     aria-selected={stageTab === '3d'}
                     onClick={() => setStageTab('3d')}
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-[1px] transition-colors ${
+                    className={`relative px-3.5 py-1.5 text-xs font-medium rounded-[1px] transition-colors ${
                       stageTab === '3d'
-                        ? 'bg-white text-[#141413] shadow-2xs'
+                        ? 'text-[#141413]'
                         : 'text-[#575652] hover:text-[#141413]'
                     }`}
                   >
-                    <Box className="w-3.5 h-3.5" aria-hidden="true" />
-                    {t.tab3d}
+                    {stageTab === '3d' && (
+                      <motion.span
+                        layoutId="models-stage-pill"
+                        transition={SHEET_TRANSITION}
+                        aria-hidden="true"
+                        className="absolute inset-0 bg-white shadow-2xs rounded-[1px]"
+                      />
+                    )}
+                    <span className="relative z-10 inline-flex items-center gap-1.5">
+                      <Box className="w-3.5 h-3.5" aria-hidden="true" />
+                      {t.tab3d}
+                    </span>
                   </button>
                   <button
                     role="tab"
                     type="button"
                     aria-selected={stageTab === 'photos'}
                     onClick={() => setStageTab('photos')}
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium rounded-[1px] transition-colors ${
+                    className={`relative px-3.5 py-1.5 text-xs font-medium rounded-[1px] transition-colors ${
                       stageTab === 'photos'
-                        ? 'bg-white text-[#141413] shadow-2xs'
+                        ? 'text-[#141413]'
                         : 'text-[#575652] hover:text-[#141413]'
                     }`}
                   >
-                    <Camera className="w-3.5 h-3.5" aria-hidden="true" />
-                    {t.tabPhotos(activeModel.photos.length)}
+                    {stageTab === 'photos' && (
+                      <motion.span
+                        layoutId="models-stage-pill"
+                        transition={SHEET_TRANSITION}
+                        aria-hidden="true"
+                        className="absolute inset-0 bg-white shadow-2xs rounded-[1px]"
+                      />
+                    )}
+                    <span className="relative z-10 inline-flex items-center gap-1.5">
+                      <Camera className="w-3.5 h-3.5" aria-hidden="true" />
+                      {t.tabPhotos(activeModel.photos.length)}
+                    </span>
                   </button>
                 </div>
 
@@ -383,7 +438,7 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                             )
                           }
                           aria-label={t.prevPhotoAria}
-                          className="absolute left-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/90 hover:bg-white text-[#141413] border border-[#E5E5E0] shadow-xs transition-colors"
+                          className="absolute left-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-9 h-9 rounded-[2px] bg-white/95 hover:bg-white text-[#141413] border border-[#D6D4CC] hover:border-[#9E3B2E] shadow-xs transition-colors"
                         >
                           <ChevronLeft className="w-4 h-4" />
                         </button>
@@ -395,7 +450,7 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
                             )
                           }
                           aria-label={t.nextPhotoAria}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/90 hover:bg-white text-[#141413] border border-[#E5E5E0] shadow-xs transition-colors"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-9 h-9 rounded-[2px] bg-white/95 hover:bg-white text-[#141413] border border-[#D6D4CC] hover:border-[#9E3B2E] shadow-xs transition-colors"
                         >
                           <ChevronRight className="w-4 h-4" />
                         </button>
@@ -445,72 +500,96 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
 
             {/* Right Column: Model Dossier & Companion Photos */}
             <div className="lg:col-span-5 flex flex-col gap-5">
-              <div className="bg-white border border-[#D6D4CC] rounded-[2px] p-5 sm:p-6 space-y-4">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] bg-[#F3F2EE] border border-[#D6D4CC] font-mono-tabular text-[11px] font-medium text-[#141413]">
-                    MD. {String(safeModelIndex + 1).padStart(2, '0')} · {activeModel.studioOrContext}
-                  </span>
-                  <span className="font-mono-tabular text-xs font-medium text-[#6B6A65]">
-                    {activeModel.year}
-                  </span>
-                </div>
+              <div className="bg-white border border-[#D6D4CC] rounded-[2px] p-5 sm:p-6">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeModel.id}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.18, ease: ARCHITECTURAL_EASE }}
+                    className="space-y-4"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] bg-[#F3F2EE] border border-[#D6D4CC] font-mono-tabular text-[11px] font-medium text-[#141413]">
+                        MD. {String(safeModelIndex + 1).padStart(2, '0')} · {activeModel.studioOrContext}
+                      </span>
+                      <span className="font-mono-tabular text-xs font-medium text-[#6B6A65]">
+                        {activeModel.year}
+                      </span>
+                    </div>
 
-                <div className="space-y-1">
-                  <h3 className="font-editorial text-2xl sm:text-[26px] font-semibold text-[#141413] leading-snug">
-                    {activeModel.title}
-                  </h3>
-                  <p className="text-xs font-medium text-[#9E3B2E]">{activeModel.subtitle}</p>
-                </div>
+                    <div className="space-y-1">
+                      <h3 className="font-editorial text-2xl sm:text-[26px] font-semibold text-[#141413] leading-snug">
+                        {activeModel.title}
+                      </h3>
+                      <p className="text-xs font-medium text-[#9E3B2E]">{activeModel.subtitle}</p>
+                    </div>
 
-                <dl className="grid grid-cols-3 gap-3 py-3 border-y border-[#ECEAE2] text-xs">
-                  <div className="col-span-2 min-w-0">
-                    <dt className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#8A8882] mb-0.5">
-                      {t.yearOfStudyLabel}
-                    </dt>
-                    <dd className="font-medium text-[#141413] truncate">
-                      {activeModel.studioOrContext}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#8A8882] mb-0.5">
-                      {t.yearLabel}
-                    </dt>
-                    <dd className="font-mono-tabular font-medium text-[#141413]">
-                      {activeModel.year}
-                    </dd>
-                  </div>
-                  <div className="col-span-3">
-                    <dt className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#8A8882] mb-0.5">
-                      {t.scaleLabel}
-                    </dt>
-                    <dd className="font-mono-tabular text-[#575652]">{activeModel.scale}</dd>
-                  </div>
-                </dl>
+                    <dl className="grid grid-cols-3 gap-3 py-3 border-y border-[#ECEAE2] text-xs">
+                      <div className="col-span-2 min-w-0">
+                        <dt className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#8A8882] mb-0.5">
+                          {t.yearOfStudyLabel}
+                        </dt>
+                        <dd className="font-medium text-[#141413] truncate">
+                          {activeModel.studioOrContext}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#8A8882] mb-0.5">
+                          {t.yearLabel}
+                        </dt>
+                        <dd className="font-mono-tabular font-medium text-[#141413]">
+                          {activeModel.year}
+                        </dd>
+                      </div>
+                      <div className="col-span-3">
+                        <dt className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#8A8882] mb-0.5">
+                          {t.scaleLabel}
+                        </dt>
+                        <dd className="font-mono-tabular text-[#575652]">{activeModel.scale}</dd>
+                      </div>
+                    </dl>
 
-                <p className="text-sm text-[#575652] leading-relaxed">{activeModel.description}</p>
+                    <p className="text-sm text-[#575652] leading-relaxed">{activeModel.description}</p>
 
-                {activeVariant && (
-                  <div className="p-3.5 bg-[#F7F6F2] border border-[#D6D4CC] rounded-[2px] space-y-1">
-                    <p className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#9E3B2E]">
-                      {t.activeVariantPrefix} · {activeVariant.systemType}
-                    </p>
-                    <p className="text-sm font-semibold text-[#141413]">{activeVariant.label}</p>
-                    <p className="text-xs text-[#575652] leading-relaxed">
-                      {activeVariant.description}
-                    </p>
-                  </div>
-                )}
+                    {activeVariant && (
+                      <div className="p-3.5 bg-[#F7F6F2] border border-[#D6D4CC] rounded-[2px] space-y-1">
+                        <p className="text-[10px] font-mono-tabular uppercase tracking-wider text-[#9E3B2E]">
+                          {t.activeVariantPrefix} · {activeVariant.systemType}
+                        </p>
+                        <p className="text-sm font-semibold text-[#141413]">{activeVariant.label}</p>
+                        <p className="text-xs text-[#575652] leading-relaxed">
+                          {activeVariant.description}
+                        </p>
+                      </div>
+                    )}
 
-                <div className="pt-2 flex flex-wrap gap-1.5">
-                  {activeModel.software.map((tool) => (
-                    <span
-                      key={tool}
-                      className="px-2 py-0.5 text-[11px] font-mono-tabular font-medium bg-[#F3F2EE] border border-[#E2E0D8] text-[#2C2C2A] rounded-[2px]"
-                    >
-                      {tool}
-                    </span>
-                  ))}
-                </div>
+                    <div className="pt-2 flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex flex-wrap gap-1.5">
+                        {activeModel.software.map((tool) => (
+                          <span
+                            key={tool}
+                            className="px-2 py-0.5 text-[11px] font-mono-tabular font-medium bg-[#F3F2EE] border border-[#E2E0D8] text-[#2C2C2A] rounded-[2px]"
+                          >
+                            {tool}
+                          </span>
+                        ))}
+                      </div>
+
+                      {linkedProjectId && onOpenProjectPlates && (
+                        <button
+                          type="button"
+                          onClick={() => onOpenProjectPlates(linkedProjectId)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#9E3B2E] bg-[#F6ECEA] border border-[#9E3B2E]/35 hover:bg-[#9E3B2E] hover:text-white rounded-[2px] transition-colors whitespace-nowrap shrink-0 no-print"
+                        >
+                          {t.openCaseStudy}
+                          <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+                        </button>
+                      )}
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
               </div>
 
               {/* Companion Photos Panel */}
@@ -575,83 +654,108 @@ export function ModelsShowcaseSection({ models, locale }: ModelsShowcaseSectionP
       </div>
 
       {/* Companion Photo Lightbox */}
-      {activePhoto && photoLightboxIndex !== null && activeModel && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={`Model photo: ${activePhoto.caption}`}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#141413]/85 backdrop-blur-xs p-4 sm:p-8 no-print"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setPhotoLightboxIndex(null);
-          }}
-        >
-          <div className="w-full max-w-[900px] max-h-[90vh] bg-white border border-[#D6D4CC] rounded-[2px] overflow-hidden flex flex-col shadow-2xl">
-            <div className="px-5 py-3.5 border-b border-[#D6D4CC] flex items-center justify-between gap-4">
-              <div className="min-w-0">
-                <p className="font-mono-tabular text-xs text-[#6B6A65] truncate">
-                  {activeModel.title}
-                </p>
-                <h3 className="font-editorial text-xl font-semibold text-[#141413] truncate">
-                  {activePhoto.caption}
-                </h3>
+      <AnimatePresence>
+        {activePhoto && photoLightboxIndex !== null && activeModel && (
+          <motion.div
+            key="model-photo-lightbox-backdrop"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Model photo: ${activePhoto.caption}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: ARCHITECTURAL_EASE }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#141413]/85 backdrop-blur-xs p-4 sm:p-8 no-print"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setPhotoLightboxIndex(null);
+            }}
+          >
+            <motion.div
+              key="model-photo-lightbox-panel"
+              initial={{ opacity: 0, scale: 0.985, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.985, y: 8 }}
+              transition={SHEET_TRANSITION}
+              className="w-full max-w-[900px] max-h-[90vh] bg-white border border-[#D6D4CC] rounded-[2px] overflow-hidden flex flex-col shadow-2xl"
+            >
+              <div className="px-5 py-3.5 border-b border-[#D6D4CC] flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="font-mono-tabular text-xs text-[#6B6A65] truncate">
+                    {activeModel.title}
+                  </p>
+                  <h3 className="font-editorial text-xl font-semibold text-[#141413] truncate">
+                    {activePhoto.caption}
+                  </h3>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {activeModel.photos.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setPhotoLightboxIndex(
+                            (photoLightboxIndex - 1 + activeModel.photos.length) %
+                              activeModel.photos.length
+                          )
+                        }
+                        aria-label={t.prevPhotoAria}
+                        className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE]"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setPhotoLightboxIndex((photoLightboxIndex + 1) % activeModel.photos.length)
+                        }
+                        aria-label={t.nextPhotoAria}
+                        className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE]"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setPhotoLightboxIndex(null)}
+                    aria-label={t.closePhotoViewerAria}
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#575652] hover:text-[#141413] hover:bg-[#F3F2EE]"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5 shrink-0">
-                {activeModel.photos.length > 1 && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setPhotoLightboxIndex(
-                          (photoLightboxIndex - 1 + activeModel.photos.length) %
-                            activeModel.photos.length
-                        )
-                      }
-                      aria-label={t.prevPhotoAria}
-                      className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE]"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setPhotoLightboxIndex((photoLightboxIndex + 1) % activeModel.photos.length)
-                      }
-                      aria-label={t.nextPhotoAria}
-                      className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE]"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </>
-                )}
-                <button
-                  type="button"
-                  onClick={() => setPhotoLightboxIndex(null)}
-                  aria-label={t.closePhotoViewerAria}
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#575652] hover:text-[#141413] hover:bg-[#F3F2EE]"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+
+              <div className="flex-1 overflow-auto bg-[#F7F6F2] p-4 sm:p-6 flex items-center justify-center">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activePhoto.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.16, ease: ARCHITECTURAL_EASE }}
+                    className="w-full"
+                  >
+                    <ArchitecturalImage
+                      src={activePhoto.imageUrl}
+                      alt={activePhoto.caption}
+                      fit="contain"
+                      className="w-full h-[60vh] bg-white rounded-[2px] p-2 border border-[#D6D4CC]"
+                    />
+                  </motion.div>
+                </AnimatePresence>
               </div>
-            </div>
 
-            <div className="flex-1 overflow-auto bg-[#F7F6F2] p-4 sm:p-6 flex items-center justify-center">
-              <ArchitecturalImage
-                src={activePhoto.imageUrl}
-                alt={activePhoto.caption}
-                fit="contain"
-                className="w-full h-[60vh] bg-white rounded-[2px] p-2 border border-[#D6D4CC]"
-              />
-            </div>
-
-            <div className="px-5 py-3 border-t border-[#D6D4CC] flex items-center justify-between text-xs text-[#6B6A65]">
-              <span>{activePhoto.caption}</span>
-              <span className="font-mono-tabular">
-                {photoLightboxIndex + 1} / {activeModel.photos.length}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
+              <div className="px-5 py-3 border-t border-[#D6D4CC] flex items-center justify-between text-xs text-[#6B6A65]">
+                <span>{activePhoto.caption}</span>
+                <span className="font-mono-tabular">
+                  {photoLightboxIndex + 1} / {activeModel.photos.length}
+                </span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

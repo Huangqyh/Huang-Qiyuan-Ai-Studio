@@ -1,41 +1,67 @@
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { Locale, UI_TEXT } from '../i18n/translations';
 import { SketchItem } from '../types/portfolio';
 import { ArchitecturalImage } from './ArchitecturalImage';
 import {
+  ARCHITECTURAL_EASE,
   DraftingCornerMarks,
   InkDivider,
   InkUnderline,
+  SHEET_TRANSITION,
   StaggerRevealItem,
+  useBodyScrollLock,
 } from './SketchMotion';
 
 interface SketchesGalleryProps {
   sketches: SketchItem[];
   locale: Locale;
+  selectedIndex?: number | null;
+  onSelectIndex?: (index: number | null) => void;
 }
 
-export function SketchesGallery({ sketches, locale }: SketchesGalleryProps) {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+export function SketchesGallery({
+  sketches,
+  locale,
+  selectedIndex: selectedIndexProp,
+  onSelectIndex,
+}: SketchesGalleryProps) {
+  const [internalIndex, setInternalIndex] = useState<number | null>(null);
   const [zoomed, setZoomed] = useState(false);
   const t = UI_TEXT[locale].sketches;
 
-  const selectedSketch = selectedIndex !== null ? sketches[selectedIndex] : null;
+  const isControlled = selectedIndexProp !== undefined && onSelectIndex !== undefined;
+  const selectedIndex = isControlled ? selectedIndexProp : internalIndex;
+
+  const updateSelectedIndex = (next: number | null) => {
+    if (isControlled) {
+      onSelectIndex(next);
+    } else {
+      setInternalIndex(next);
+    }
+  };
 
   useEffect(() => {
-    if (selectedIndex === null) return;
+    setZoomed(false);
+  }, [selectedIndex]);
+
+  const selectedSketch =
+    selectedIndex !== null && selectedIndex >= 0 && selectedIndex < sketches.length
+      ? sketches[selectedIndex]
+      : null;
+
+  useBodyScrollLock(selectedSketch !== null);
+
+  useEffect(() => {
+    if (selectedIndex === null || sketches.length === 0) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setSelectedIndex(null);
-        setZoomed(false);
+        updateSelectedIndex(null);
       } else if (e.key === 'ArrowRight') {
-        setSelectedIndex((prev) => (prev === null ? null : (prev + 1) % sketches.length));
-        setZoomed(false);
+        updateSelectedIndex((selectedIndex + 1) % sketches.length);
       } else if (e.key === 'ArrowLeft') {
-        setSelectedIndex((prev) =>
-          prev === null ? null : (prev - 1 + sketches.length) % sketches.length
-        );
-        setZoomed(false);
+        updateSelectedIndex((selectedIndex - 1 + sketches.length) % sketches.length);
       }
     };
     window.addEventListener('keydown', onKey);
@@ -43,7 +69,10 @@ export function SketchesGallery({ sketches, locale }: SketchesGalleryProps) {
   }, [selectedIndex, sketches.length]);
 
   return (
-    <section id="sketches" className="section-optimize pt-14 pb-16 lg:pt-16 lg:pb-20 bg-transparent">
+    <section
+      id="sketches"
+      className="section-optimize pt-14 pb-16 lg:pt-16 lg:pb-20 bg-transparent no-print"
+    >
       <div className="max-w-[1240px] mx-auto px-5 sm:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
           <div>
@@ -64,7 +93,7 @@ export function SketchesGallery({ sketches, locale }: SketchesGalleryProps) {
                 <button
                   type="button"
                   onClick={() => {
-                    setSelectedIndex(index);
+                    updateSelectedIndex(index);
                     setZoomed(false);
                   }}
                   aria-label={t.inspectAria(sketch.title)}
@@ -107,100 +136,113 @@ export function SketchesGallery({ sketches, locale }: SketchesGalleryProps) {
       </div>
 
       {/* Sketch Lightbox */}
-      {selectedSketch && selectedIndex !== null && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={t.dialogAria(selectedSketch.title)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#141413]/85 backdrop-blur-xs p-4 sm:p-8 no-print"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setSelectedIndex(null);
-              setZoomed(false);
-            }
-          }}
-        >
-          <div className="w-full max-w-[960px] max-h-[90vh] bg-white border border-[#D6D4CC] rounded-[2px] overflow-hidden flex flex-col shadow-2xl">
-            <div className="px-5 py-3.5 border-b border-[#D6D4CC] flex items-center justify-between gap-4">
-              <div className="min-w-0">
-                <p className="font-mono-tabular text-xs text-[#6B6A65]">
-                  {selectedSketch.plateNumber} · {selectedSketch.medium} · {selectedSketch.year}
-                </p>
-                <h3 className="font-editorial text-2xl font-semibold text-[#141413] truncate">
-                  {selectedSketch.title}
-                </h3>
+      <AnimatePresence>
+        {selectedSketch && selectedIndex !== null && (
+          <motion.div
+            key="sketch-lightbox-backdrop"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t.dialogAria(selectedSketch.title)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: ARCHITECTURAL_EASE }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#141413]/85 backdrop-blur-xs p-4 sm:p-8 no-print"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                updateSelectedIndex(null);
+              }
+            }}
+          >
+            <motion.div
+              key="sketch-lightbox-panel"
+              initial={{ opacity: 0, scale: 0.985, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.985, y: 8 }}
+              transition={SHEET_TRANSITION}
+              className="w-full max-w-[960px] max-h-[90vh] bg-white border border-[#D6D4CC] rounded-[2px] overflow-hidden flex flex-col shadow-2xl"
+            >
+              <div className="px-5 py-3.5 border-b border-[#D6D4CC] flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="font-mono-tabular text-xs text-[#6B6A65]">
+                    {selectedSketch.plateNumber} · {selectedSketch.medium} · {selectedSketch.year}
+                  </p>
+                  <h3 className="font-editorial text-2xl font-semibold text-[#141413] truncate">
+                    {selectedSketch.title}
+                  </h3>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setZoomed((prev) => !prev)}
+                    aria-label={zoomed ? t.zoomOutAria : t.zoomInAria}
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE] transition-colors"
+                  >
+                    {zoomed ? <ZoomOut className="w-4 h-4" /> : <ZoomIn className="w-4 h-4" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateSelectedIndex((selectedIndex - 1 + sketches.length) % sketches.length)
+                    }
+                    aria-label={t.prevAria}
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE] transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => updateSelectedIndex((selectedIndex + 1) % sketches.length)}
+                    aria-label={t.nextAria}
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE] transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => updateSelectedIndex(null)}
+                    aria-label={t.closeAria}
+                    className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#575652] hover:text-[#141413] hover:bg-[#F3F2EE] transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
 
-              <div className="flex items-center gap-1.5 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setZoomed((prev) => !prev)}
-                  aria-label={zoomed ? t.zoomOutAria : t.zoomInAria}
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE] transition-colors"
-                >
-                  {zoomed ? <ZoomOut className="w-4 h-4" /> : <ZoomIn className="w-4 h-4" />}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedIndex((selectedIndex - 1 + sketches.length) % sketches.length);
-                    setZoomed(false);
-                  }}
-                  aria-label={t.prevAria}
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE] transition-colors"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedIndex((selectedIndex + 1) % sketches.length);
-                    setZoomed(false);
-                  }}
-                  aria-label={t.nextAria}
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#141413] hover:bg-[#F3F2EE] transition-colors"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedIndex(null);
-                    setZoomed(false);
-                  }}
-                  aria-label={t.closeAria}
-                  className="inline-flex items-center justify-center w-9 h-9 rounded-[2px] text-[#575652] hover:text-[#141413] hover:bg-[#F3F2EE] transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+              <div className="flex-1 overflow-auto bg-[#F7F6F2] p-4 sm:p-6 flex">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedSketch.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.16, ease: ARCHITECTURAL_EASE }}
+                    className="m-auto transition-all duration-200"
+                    style={{ width: zoomed ? '165%' : '100%', maxWidth: zoomed ? 'none' : '640px' }}
+                  >
+                    <ArchitecturalImage
+                      src={selectedSketch.imageUrl}
+                      alt={selectedSketch.title}
+                      fit="contain"
+                      className={`w-full bg-white rounded-[2px] p-3 border border-[#D6D4CC] ${
+                        zoomed ? 'min-h-[70vh]' : 'h-[62vh]'
+                      }`}
+                    />
+                  </motion.div>
+                </AnimatePresence>
               </div>
-            </div>
 
-            <div className="flex-1 overflow-auto bg-[#F7F6F2] p-4 sm:p-6 flex">
-              <div
-                className="m-auto transition-all duration-200"
-                style={{ width: zoomed ? '165%' : '100%', maxWidth: zoomed ? 'none' : '640px' }}
-              >
-                <ArchitecturalImage
-                  src={selectedSketch.imageUrl}
-                  alt={selectedSketch.title}
-                  fit="contain"
-                  className={`w-full bg-white rounded-[2px] p-3 border border-[#D6D4CC] ${
-                    zoomed ? 'min-h-[70vh]' : 'h-[62vh]'
-                  }`}
-                />
+              <div className="px-5 py-3 border-t border-[#D6D4CC] flex items-center justify-between text-xs text-[#6B6A65]">
+                <span>{selectedSketch.subject}</span>
+                <span className="font-mono-tabular">
+                  {selectedIndex + 1} / {sketches.length}
+                </span>
               </div>
-            </div>
-
-            <div className="px-5 py-3 border-t border-[#D6D4CC] flex items-center justify-between text-xs text-[#6B6A65]">
-              <span>{selectedSketch.subject}</span>
-              <span className="font-mono-tabular">
-                {selectedIndex + 1} / {sketches.length}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

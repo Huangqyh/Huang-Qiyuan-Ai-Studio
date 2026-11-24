@@ -9,17 +9,21 @@ import {
   addProjectToPortfolio,
   addSkillToGroup,
   buildPublicVisitorUrl,
+  buildProjectDeepLinkUrl,
   buildShowcaseShareUrl,
   deleteModelFromPortfolio,
   deletePhotoFromModel,
   deleteProjectFromPortfolio,
   doesSkillMatch,
   filterProjects,
+  findLinkedModelId,
+  findLinkedProjectId,
   getMatchingExperienceIds,
   isOwnerStudioRoute,
   isPublicShowcaseMode,
   parseCanvasSurface,
   parseImportedPortfolioJson,
+  parseProjectIdFromSearch,
   removeSkillFromGroup,
   toggleCanvasSurface,
   validateExperienceInput,
@@ -262,4 +266,37 @@ test('localizes portfolio data to Simplified Chinese while preserving canonical 
   assert.ok(modelingSkills?.items.includes('CFD'));
   assert.equal(bimSkills?.items.includes('CFD'), false);
   assert.equal(INITIAL_PORTFOLIO_DATA.projects.filter((p) => p.featured).length, 4);
+});
+
+test('resolves bidirectional project-model links and project deep-link URLs', () => {
+  assert.equal(
+    findLinkedModelId('permeable-sports-corridor', INITIAL_PORTFOLIO_DATA.models),
+    'y3s2-permeable-sports-corridor'
+  );
+  assert.equal(
+    findLinkedModelId('project-army-camp', INITIAL_PORTFOLIO_DATA.models),
+    null
+  );
+  assert.equal(
+    findLinkedProjectId('y3s1-model', INITIAL_PORTFOLIO_DATA.projects),
+    '3rs-heritage-rethought'
+  );
+  assert.equal(
+    findLinkedProjectId('ar2328-structural-systems', INITIAL_PORTFOLIO_DATA.projects),
+    null
+  );
+
+  assert.equal(parseProjectIdFromSearch('?lang=zh&project=open-celmer'), 'open-celmer');
+  assert.equal(parseProjectIdFromSearch('?project=   '), null);
+  assert.equal(
+    buildProjectDeepLinkUrl('https://portfolio.example.com/?lang=zh#works', 'open-celmer'),
+    'https://portfolio.example.com/?lang=zh&project=open-celmer#works'
+  );
+  assert.equal(
+    buildProjectDeepLinkUrl(
+      'https://portfolio.example.com/?lang=zh&project=open-celmer#works',
+      null
+    ),
+    'https://portfolio.example.com/?lang=zh#works'
+  );
 });

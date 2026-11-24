@@ -103,4 +103,13 @@
   .print-break-avoid {
     break-inside: avoid;
   }
+
+  h1, h2, h3, h4 {
+    break-after: avoid;
+  }
+
+  section#cv {
+    background: #ffffff !important;
+    padding-top: 0 !important;
+  }
 }

@@ -1,7 +1,26 @@
 import { motion } from 'motion/react';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 
-const ARCHITECTURAL_EASE = [0.16, 1, 0.3, 1] as const;
+export const ARCHITECTURAL_EASE = [0.16, 1, 0.3, 1] as const;
+
+export const SHEET_TRANSITION = {
+  duration: 0.22,
+  ease: ARCHITECTURAL_EASE,
+} as const;
+
+/**
+ * Locks background document scrolling while a lightbox or modal sheet is open.
+ */
+export function useBodyScrollLock(locked: boolean) {
+  useEffect(() => {
+    if (!locked || typeof document === 'undefined') return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [locked]);
+}
 
 interface InkDividerProps {
   className?: string;

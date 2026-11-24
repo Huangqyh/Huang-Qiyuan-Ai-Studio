@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Compass } from 'lucide-react';
 
 interface ArchitecturalImageProps {
@@ -10,6 +10,7 @@ interface ArchitecturalImageProps {
   imgClassName?: string;
   fit?: 'cover' | 'contain';
   priority?: boolean;
+  draggable?: boolean;
   /**
    * 'thumbnail' resolves local portfolio/model assets to pre-generated lightweight WebP
    * thumbnails for silky-smooth grid scrolling, falling back automatically to the original
@@ -37,18 +38,34 @@ export function ArchitecturalImage({
   imgClassName = '',
   fit = 'cover',
   priority = false,
+  draggable,
   variant = 'full',
 }: ArchitecturalImageProps) {
   const thumbSrc = variant === 'thumbnail' ? resolveThumbnailSrc(src) : null;
   const [useOriginalFallback, setUseOriginalFallback] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(priority);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  const activeSrc = thumbSrc && !useOriginalFallback ? thumbSrc : src;
 
   useEffect(() => {
     setUseOriginalFallback(false);
     setFailed(false);
   }, [src, variant]);
 
-  const activeSrc = thumbSrc && !useOriginalFallback ? thumbSrc : src;
+  useEffect(() => {
+    if (priority) {
+      setIsLoaded(true);
+      return;
+    }
+    const img = imgRef.current;
+    if (img && img.complete && img.naturalWidth > 0) {
+      setIsLoaded(true);
+    } else {
+      setIsLoaded(false);
+    }
+  }, [activeSrc, priority]);
 
   if (!activeSrc || failed) {
     return (
@@ -83,12 +100,15 @@ export function ArchitecturalImage({
   return (
     <div className={`relative overflow-hidden bg-[#F7F6F2] ${className}`}>
       <img
+        ref={imgRef}
         src={activeSrc}
         alt={alt}
+        draggable={draggable}
         loading={priority ? 'eager' : 'lazy'}
         decoding={priority ? 'sync' : 'async'}
         fetchPriority={priority ? 'high' : 'auto'}
         referrerPolicy="no-referrer"
+        onLoad={() => setIsLoaded(true)}
         onError={() => {
           if (thumbSrc && !useOriginalFallback) {
             setUseOriginalFallback(true);
@@ -98,6 +118,8 @@ export function ArchitecturalImage({
         }}
         className={`w-full h-full ${
           fit === 'contain' ? 'object-contain' : 'object-cover'
+        } transition-opacity duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isLoaded || priority ? 'opacity-100' : 'opacity-0'
         } ${imgClassName}`}
       />
     </div>

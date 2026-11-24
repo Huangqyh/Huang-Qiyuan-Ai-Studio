@@ -11,7 +11,13 @@ import { Locale, UI_TEXT } from '../i18n/translations';
 import { ProfileInfo } from '../types/portfolio';
 import { CanvasSurface } from '../utils/portfolioLogic';
 import { ArchitecturalImage } from './ArchitecturalImage';
-import { DraftingCornerMarks, InkDivider, InkUnderline } from './SketchMotion';
+import {
+  ARCHITECTURAL_EASE,
+  DraftingCornerMarks,
+  InkDivider,
+  InkUnderline,
+  SHEET_TRANSITION,
+} from './SketchMotion';
 
 interface HeroSectionProps {
   profile: ProfileInfo;
@@ -62,27 +68,47 @@ export function HeroSection({
                 type="button"
                 aria-pressed={canvasSurface === 'paper'}
                 onClick={() => onChangeSurface('paper')}
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-medium rounded-[1px] transition-colors whitespace-nowrap ${
+                className={`relative px-2.5 py-1 text-[11px] font-medium rounded-[1px] transition-colors whitespace-nowrap ${
                   canvasSurface === 'paper'
-                    ? 'bg-white text-[#141413] shadow-2xs'
+                    ? 'text-[#141413]'
                     : 'text-[#575652] hover:text-[#141413]'
                 }`}
               >
-                <FileText className="w-3 h-3" aria-hidden="true" />
-                {t.draftingPaper}
+                {canvasSurface === 'paper' && (
+                  <motion.span
+                    layoutId="hero-surface-pill"
+                    transition={SHEET_TRANSITION}
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-white shadow-2xs rounded-[1px]"
+                  />
+                )}
+                <span className="relative z-10 inline-flex items-center gap-1.5">
+                  <FileText className="w-3 h-3" aria-hidden="true" />
+                  {t.draftingPaper}
+                </span>
               </button>
               <button
                 type="button"
                 aria-pressed={canvasSurface === 'grid'}
                 onClick={() => onChangeSurface('grid')}
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-medium rounded-[1px] transition-colors whitespace-nowrap ${
+                className={`relative px-2.5 py-1 text-[11px] font-medium rounded-[1px] transition-colors whitespace-nowrap ${
                   canvasSurface === 'grid'
-                    ? 'bg-white text-[#9E3B2E] shadow-2xs'
+                    ? 'text-[#9E3B2E]'
                     : 'text-[#575652] hover:text-[#141413]'
                 }`}
               >
-                <Grid2x2 className="w-3 h-3" aria-hidden="true" />
-                {t.draftingGrid}
+                {canvasSurface === 'grid' && (
+                  <motion.span
+                    layoutId="hero-surface-pill"
+                    transition={SHEET_TRANSITION}
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-white shadow-2xs rounded-[1px]"
+                  />
+                )}
+                <span className="relative z-10 inline-flex items-center gap-1.5">
+                  <Grid2x2 className="w-3 h-3" aria-hidden="true" />
+                  {t.draftingGrid}
+                </span>
               </button>
             </div>
           </div>
@@ -205,30 +231,24 @@ export function HeroSection({
 
         {/* Full-Width Quantitative Summary Strip (completely visible above the fold on 1440x900) */}
         <div className="mt-8 pt-6 border-t border-[#D6D4CC] grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          <div>
-            <p className="font-mono-tabular text-2xl sm:text-3xl font-medium text-[#141413]">
-              {profile.gpaDisplay}
-            </p>
-            <p className="mt-1 text-xs text-[#575652]">{t.metrics.honours}</p>
-          </div>
-          <div>
-            <p className="font-mono-tabular text-2xl sm:text-3xl font-medium text-[#141413]">
-              {String(experienceCount).padStart(2, '0')}
-            </p>
-            <p className="mt-1 text-xs text-[#575652]">{t.metrics.firms}</p>
-          </div>
-          <div>
-            <p className="font-mono-tabular text-2xl sm:text-3xl font-medium text-[#141413]">
-              {String(projectCount).padStart(2, '0')}
-            </p>
-            <p className="mt-1 text-xs text-[#575652]">{t.metrics.projects}</p>
-          </div>
-          <div>
-            <p className="font-mono-tabular text-2xl sm:text-3xl font-medium text-[#141413]">
-              {String(sketchCount).padStart(2, '0')}
-            </p>
-            <p className="mt-1 text-xs text-[#575652]">{t.metrics.studies}</p>
-          </div>
+          {[
+            { id: 'honours', value: profile.gpaDisplay, label: t.metrics.honours },
+            { id: 'firms', value: String(experienceCount).padStart(2, '0'), label: t.metrics.firms },
+            { id: 'projects', value: String(projectCount).padStart(2, '0'), label: t.metrics.projects },
+            { id: 'studies', value: String(sketchCount).padStart(2, '0'), label: t.metrics.studies },
+          ].map((stat, idx) => (
+            <motion.div
+              key={stat.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.12 + idx * 0.05, ease: ARCHITECTURAL_EASE }}
+            >
+              <p className="font-mono-tabular text-2xl sm:text-3xl font-medium text-[#141413]">
+                {stat.value}
+              </p>
+              <p className="mt-1 text-xs text-[#575652]">{stat.label}</p>
+            </motion.div>
+          ))}
         </div>
       </div>
 

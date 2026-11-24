@@ -1,6 +1,8 @@
 import { Languages, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { AnimatePresence, motion, useScroll } from 'motion/react';
+import { useEffect, useState } from 'react';
 import { Locale, UI_TEXT } from '../i18n/translations';
+import { ARCHITECTURAL_EASE, SHEET_TRANSITION } from './SketchMotion';
 
 interface HeaderProps {
   brandName: string;
@@ -8,8 +10,13 @@ interface HeaderProps {
   onToggleLocale: () => void;
 }
 
+const SECTION_HREFS = ['#works', '#sketches', '#models', '#cv', '#share'] as const;
+
 export function Header({ brandName, locale, onToggleLocale }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const { scrollYProgress } = useScroll();
   const t = UI_TEXT[locale];
 
   const navItems = [
@@ -20,8 +27,52 @@ export function Header({ brandName, locale, onToggleLocale }: HeaderProps) {
     { label: t.header.nav.contact, href: '#share' },
   ];
 
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 12);
+      if (y < 140) {
+        setActiveSection(null);
+      }
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return;
+
+    const elements = SECTION_HREFS.map((href) => document.querySelector(href)).filter(
+      (el): el is Element => el !== null
+    );
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (window.scrollY < 140) return;
+        const intersecting = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (intersecting[0]?.target.id) {
+          setActiveSection(`#${intersecting[0].target.id}`);
+        }
+      },
+      { rootMargin: '-22% 0px -58% 0px', threshold: 0 }
+    );
+
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 bg-[#FAFAF8] border-b border-[#D6D4CC] no-print">
+    <header
+      className={`sticky top-0 z-40 border-b border-[#D6D4CC] transition-[background-color,box-shadow] duration-200 no-print ${
+        scrolled
+          ? 'bg-[#FAFAF8]/95 backdrop-blur-[2px] shadow-[0_1px_12px_-6px_rgba(20,20,19,0.16)]'
+          : 'bg-[#FAFAF8]'
+      }`}
+    >
       <div className="max-w-[1240px] mx-auto px-5 sm:px-8 h-16 flex items-center justify-between gap-8">
         {/* Zone 1: Single-line Brand Wordmark */}
         <a
@@ -36,15 +87,30 @@ export function Header({ brandName, locale, onToggleLocale }: HeaderProps) {
           aria-label={t.header.primaryNavAria}
           className="hidden md:flex items-center gap-8 text-sm font-medium text-[#575652]"
         >
-          {navItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="hover:text-[#9E3B2E] transition-colors duration-150 whitespace-nowrap shrink-0 py-1 border-b border-transparent hover:border-[#9E3B2E]/50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9E3B2E]"
-            >
-              {item.label}
-            </a>
-          ))}
+          {navItems.map((item) => {
+            const isActive = activeSection === item.href;
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                aria-current={isActive ? 'true' : undefined}
+                onClick={() => setActiveSection(item.href)}
+                className={`relative py-1 whitespace-nowrap shrink-0 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9E3B2E] ${
+                  isActive ? 'text-[#9E3B2E]' : 'hover:text-[#9E3B2E]'
+                }`}
+              >
+                {item.label}
+                {isActive && (
+                  <motion.span
+                    layoutId="header-active-nav"
+                    transition={SHEET_TRANSITION}
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 -bottom-[1px] h-[1.5px] bg-[#9E3B2E]"
+                  />
+                )}
+              </a>
+            );
+          })}
         </nav>
 
         {/* Zone 3: Language Switcher */}
@@ -71,24 +137,47 @@ export function Header({ brandName, locale, onToggleLocale }: HeaderProps) {
         </div>
       </div>
 
+      {/* Scroll-progress drafting hairline along bottom border */}
+      <motion.div
+        aria-hidden="true"
+        style={{ scaleX: scrollYProgress }}
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[1.5px] origin-left bg-[#9E3B2E]/80"
+      />
+
       {/* Mobile navigation drawer */}
-      {mobileMenuOpen && (
-        <nav
-          aria-label={t.header.mobileNavAria}
-          className="md:hidden border-t border-[#D6D4CC] bg-[#FAFAF8] px-5 py-4 flex flex-col gap-1"
-        >
-          {navItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className="py-2.5 text-sm font-medium text-[#2C2C2A] hover:text-[#9E3B2E] transition-colors"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-      )}
+      <AnimatePresence initial={false}>
+        {mobileMenuOpen && (
+          <motion.nav
+            aria-label={t.header.mobileNavAria}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.22, ease: ARCHITECTURAL_EASE }}
+            className="md:hidden overflow-hidden border-t border-[#D6D4CC] bg-[#FAFAF8]"
+          >
+            <div className="px-5 py-4 flex flex-col gap-1">
+              {navItems.map((item) => {
+                const isActive = activeSection === item.href;
+                return (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => {
+                      setActiveSection(item.href);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`py-2.5 text-sm font-medium transition-colors ${
+                      isActive ? 'text-[#9E3B2E]' : 'text-[#2C2C2A] hover:text-[#9E3B2E]'
+                    }`}
+                  >
+                    {item.label}
+                  </a>
+                );
+              })}
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
